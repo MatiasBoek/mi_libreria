@@ -1,0 +1,12 @@
+{% extends 'gestion_libros/base.html' %}
+
+{% block title %}Agregar {{ modelo|title }}{% endblock %}
+
+{% block content %}
+<h2>Agregar {{ modelo|title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}
