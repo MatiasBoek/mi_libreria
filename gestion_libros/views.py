@@ -43,9 +43,6 @@ def buscar(request):
     
     return render(request, 'gestion_libros/buscar.html', {'form': form, 'resultados': resultados})
 
-from django.shortcuts import render, redirect
-from .forms import AutorForm
-
 def agregar_autor(request):
     if request.method == 'POST':
         form = AutorForm(request.POST)
