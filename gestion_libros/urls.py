@@ -1,12 +1,11 @@
 from django.urls import path
-from .views import inicio, agregar_datos, agregar_autor, agregar_libro, buscar
+from . import views
 
-app_name = 'gestion_libros'
+app_name = 'gestion_libros'  # Namespace importante
 
 urlpatterns = [
-    path('', inicio, name='inicio'),
-    path('agregar/<str:modelo>/', agregar_datos, name='agregar'),
-    path('agregar/autor/', agregar_autor, name='agregar_autor'),
-    path('agregar/libro/', agregar_libro, name='agregar_libro'),
-    path('buscar/', buscar, name='buscar'),
+    path('agregar/autor/', views.agregar_autor, name='agregar_autor'),
+    path('agregar/libro/', views.agregar_libro, name='agregar_libro'),
+    path('', views.inicio, name='inicio'),  
+    path('buscar/', views.buscar, name='buscar'),
 ]
