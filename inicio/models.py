@@ -3,6 +3,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
+# Define esta función fuera de tus modelos
+def get_current_year():
+    return timezone.now().year
+
 class Autor(models.Model):
     nombre = models.CharField(
         max_length=100,
@@ -20,7 +24,7 @@ class Autor(models.Model):
         null=True,
         default="Desconocida"
     )
-    
+
     class Meta:
         verbose_name = "Autor"
         verbose_name_plural = "Autores"
@@ -28,10 +32,10 @@ class Autor(models.Model):
         indexes = [
             models.Index(fields=['nombre']),
         ]
-    
+
     def __str__(self):
         return self.nombre
-    
+
     def clean(self):
         if len(self.nombre) < 3:
             raise ValidationError("El nombre debe tener al menos 3 caracteres")
@@ -49,15 +53,15 @@ class Editorial(models.Model):
         verbose_name="País de origen",
         default="Desconocido"
     )
-    
+
     class Meta:
         verbose_name = "Editorial"
         verbose_name_plural = "Editoriales"
         ordering = ['nombre']
-    
+
     def __str__(self):
         return f"{self.nombre} ({self.pais})"
-    
+
     def clean(self):
         if len(self.nombre) < 3:
             raise ValidationError("El nombre de la editorial debe tener al menos 3 caracteres")
@@ -86,8 +90,8 @@ class Libro(models.Model):
         verbose_name="Año de publicación",
         validators=[
             MinValueValidator(1000, message="El año debe ser mayor a 1000"),
-            MaxValueValidator(lambda: timezone.now().year, 
-                            message="El año no puede ser futuro")
+            MaxValueValidator(get_current_year,
+                              message="El año no puede ser futuro")
         ]
     )
     precio = models.DecimalField(
@@ -104,7 +108,7 @@ class Libro(models.Model):
         verbose_name="Disponible",
         default=True
     )
-    
+
     class Meta:
         verbose_name = "Libro"
         verbose_name_plural = "Libros"
@@ -114,17 +118,10 @@ class Libro(models.Model):
             models.Index(fields=['titulo']),
             models.Index(fields=['año_publicacion']),
         ]
-    
+
     def __str__(self):
         return f"{self.titulo} ({self.año_publicacion})"
-    
+
     def clean(self):
         if len(self.titulo) < 3:
             raise ValidationError("El título debe tener al menos 3 caracteres")
-        
-        # Validación personalizada adicional
-        if self.año_publicacion and self.año_publicacion > timezone.now().year:
-            raise ValidationError("El año de publicación no puede ser en el futuro")
-        
-        if self.precio and self.precio <= 0:
-            raise ValidationError("El precio debe ser mayor a cero")

@@ -8,12 +8,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'inicio' %}">Mi Librería</a>
+            {# CAMBIADO: 'index' -> 'inicio:inicio' (o el nombre que le hayas dado a tu URL principal de la app 'inicio') #}
+            {# Basado en tu urls.py anterior, 'inicio' es el nombre para path('', views.inicio, name='inicio') #}
+            <a class="navbar-brand" href="{% url 'inicio:inicio' %}">Mi Librería</a>
             <div class="navbar-nav">
-                <a class="nav-link" href="{% url 'agregar' modelo='autor' %}">Agregar Autor</a>
-                <a class="nav-link" href="{% url 'agregar' modelo='editorial' %}">Agregar Editorial</a>
-                <a class="nav-link" href="{% url 'agregar' modelo='libro' %}">Agregar Libro</a>
-                <a class="nav-link" href="{% url 'buscar' %}">Buscar</a>
+                {# CAMBIADO: Agregado 'inicio:' en todos los enlaces #}
+                <a class="nav-link" href="{% url 'inicio:agregar' modelo='autor' %}">Agregar Autor</a>
+                <a class="nav-link" href="{% url 'inicio:agregar' modelo='libro' %}">Agregar Libro</a>
+                <a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a>
+                <a class="nav-link" href="{% url 'inicio:contacto' modelo='contacto' %}">Contacto</a>
             </div>
         </div>
     </nav>

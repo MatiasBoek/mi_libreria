@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+    {% load static %}
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Lista de autores - Book Flow" />
+        <meta name="author" content="" />
+        <title>Book Flow - Autores</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Custom Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+    <body class="d-flex flex-column h-100 bg-light">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                        <span class="fw-bolder text-primary">Book Flow</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Page Content-->
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Nuestros Autores</span></h1>
+                    <p class="lead fw-normal text-muted mb-0">Descubre a los creadores de nuestras obras</p>
+                </div>
+                
+                <!-- Search Box -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-8">
+                        <form class="d-flex" method="get" action="{% url 'inicio:listar_autores' %}">
+                            <input class="form-control me-2" type="search" name="q" placeholder="Buscar autores..." aria-label="Buscar">
+                            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-11 col-xl-9 col-xxl-8">
+                        <!-- Authors Section-->
+                        <section>
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h2 class="text-primary fw-bolder mb-0">Lista de Autores</h2>
+                                <a class="btn btn-primary px-4 py-3" href="{% url 'inicio:agregar_autor' %}">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Añadir Autor
+                                </a>
+                            </div>
+                            
+                            <!-- Author Cards (Dynamic from Django) -->
+                            {% for autor in autores %}
+                            <div class="card shadow border-0 rounded-4 mb-5">
+                                <div class="card-body p-5">
+                                    <div class="row align-items-center gx-5">
+                                        <div class="col-md-3 text-center mb-4 mb-md-0">
+                                            <div class="bg-light p-4 rounded-4">
+                                                {% if autor.foto %}
+                                                    <img src="{{ autor.foto.url }}" alt="Foto de {{ autor.nombre }}" class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                                {% else %}
+                                                    <img src="{% static 'assets/default-author.png' %}" alt="Foto no disponible" class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <h3 class="fw-bolder">{{ autor.nombre }}</h3>
+                                            <p class="text-muted mb-2">
+                                                <i class="bi bi-geo-alt"></i> {{ autor.nacionalidad }}
+                                            </p>
+                                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                                <span class="badge bg-primary">{{ autor.get_edad }} años</span>
+                                                <span class="badge bg-secondary">{{ autor.libro_set.count }} libros</span>
+                                                {% if autor.premios %}
+                                                <span class="badge bg-success">{{ autor.premios }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <p>{{ autor.biografia|truncatewords:30 }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="fw-bold">Nacimiento: </span>{{ autor.fecha_nacimiento|date:"d/m/Y" }}
+                                                    {% if autor.fecha_fallecimiento %}
+                                                    <span class="mx-2">|</span>
+                                                    <span class="fw-bold">Fallecimiento: </span>{{ autor.fecha_fallecimiento|date:"d/m/Y" }}
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <a href="{% url 'inicio:detalle_autor' autor.id %}" class="btn btn-sm btn-outline-primary">Detalles</a>
+                                                    <a href="{% url 'inicio:editar_autor' autor.id %}" class="btn btn-sm btn-primary ms-2">Editar</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="alert alert-info" role="alert">
+                                No hay autores disponibles en este momento.
+                            </div>
+                            {% endfor %}
+                        </section>
+                        
+                        <!-- Pagination -->
+                        {% if is_paginated %}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Anterior</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                                </li>
+                                {% endif %}
+                                
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-disabled="true">Siguiente</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Footer-->
+        <footer class="bg-white py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0">Copyright &copy; Book Flow {% now "Y" %}</div></div>
+                    <div class="col-auto">
+                        <a class="small" href="#!">Privacidad</a>
+                        <span class="mx-1">&middot;</span>
+                        <a class="small" href="#!">Términos</a>
+                        <span class="mx-1">&middot;</span>
+                        <a class="small" href="{% url 'inicio:contacto' %}">Contacto</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>

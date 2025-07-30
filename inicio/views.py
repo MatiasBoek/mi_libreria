@@ -3,7 +3,7 @@ from .models import Autor, Editorial, Libro
 from .forms import AutorForm, EditorialForm, LibroForm, BusquedaForm
 
 def inicio(request):
-    return render(request, 'gestion_libros/inicio.html')
+    return render(request, 'index.html')
 
 def agregar_datos(request, modelo):
     if request.method == 'POST':
@@ -26,6 +26,17 @@ def agregar_datos(request, modelo):
             form = LibroForm()
     
     return render(request, 'gestion_libros/agregar.html', {'form': form, 'modelo': modelo})
+
+def agregar_libro(request):
+    if request.method == 'POST':
+        form = LibroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('gestion_libros:index')  # Ajusta este nombre según tus URLs
+    else:
+        form = LibroForm()
+    
+    return render(request, 'gestion_libros/agregar_libro.html', {'form': form})
 
 def buscar(request):
     resultados = None
@@ -52,3 +63,37 @@ def agregar_autor(request):
     else:
         form = AutorForm()
     return render(request, 'gestion_libros/agregar_autor.html', {'form': form})
+
+def listar_libros(request):
+    libros = Libro.objects.all().order_by('titulo') # Obtener todos los libros
+    context = {
+        'libros': libros,
+        'title': 'Lista de Libros'
+    }
+    return render(request, 'libros.html', context) # Asumiendo que esta es tu plantilla para la lista de libros
+
+def listar_autores(request):
+    autores = Autor.objects.all().order_by('nombre') # Obtener todos los autores
+    context = {
+        'autores': autores,
+        'title': 'Lista de Autores'
+    }
+    return render(request, 'autores.html', context) # Necesitarás crear esta plantilla
+
+def listar_editoriales(request):
+    editoriales = Editorial.objects.all().order_by('nombre') # Obtener todas las editoriales
+    context = {
+        'editoriales': editoriales,
+        'title': 'Lista de Editoriales'
+    }
+    return render(request, 'editoriales.html', context) # Necesitarás crear esta plantilla
+
+def contacto(request):
+    """
+    Vista para la página de contacto.
+    """
+    context = {
+        'title': 'Contacto',
+    }
+    
+    return render(request, 'contacto.html', context)
