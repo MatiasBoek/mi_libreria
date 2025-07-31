@@ -2,46 +2,75 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import date
+from django.urls import reverse
 
 # Define esta función fuera de tus modelos
 def get_current_year():
     return timezone.now().year
 
 class Autor(models.Model):
-    nombre = models.CharField(
-        max_length=100,
-        verbose_name="Nombre completo",
-        help_text="Nombre completo del autor",
-        unique=True,
-        error_messages={
-            'unique': "Ya existe un autor con este nombre"
-        }
+    nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    apellido = models.CharField(max_length=100, verbose_name="Apellido")
+    nacionalidad = models.CharField(max_length=100, verbose_name="Nacionalidad")
+    fecha_nacimiento = models.DateField(
+        null=True,           # Allows NULL values in the database
+        blank=True,          # Allows the field to be left blank in forms
+        verbose_name="Fecha de nacimiento"
     )
-    nacionalidad = models.CharField(
-        max_length=50,
-        verbose_name="Nacionalidad",
-        blank=True,
-        null=True,
-        default="Desconocida"
+    fecha_fallecimiento = models.DateField(
+        null=True, 
+        blank=True, 
+        verbose_name="Fecha de fallecimiento (opcional)"
+    )
+    biografia = models.TextField(
+        blank=True, 
+        null=True, 
+        verbose_name="Biografía"
+    )
+    foto = models.ImageField(
+        upload_to='autores/', 
+        null=True, 
+        blank=True, 
+        verbose_name="Foto del autor"
+    )
+    premios = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True, 
+        verbose_name="Premios recibidos"
     )
 
     class Meta:
         verbose_name = "Autor"
         verbose_name_plural = "Autores"
-        ordering = ['nombre']
-        indexes = [
-            models.Index(fields=['nombre']),
-        ]
+        ordering = ['apellido', 'nombre']
+        unique_together = ['nombre', 'apellido']
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} {self.apellido}"
 
-    def clean(self):
-        if len(self.nombre) < 3:
-            raise ValidationError("El nombre debe tener al menos 3 caracteres")
-        if self.nacionalidad and len(self.nacionalidad) < 3:
-            raise ValidationError("La nacionalidad debe tener al menos 3 caracteres")
+    @property
+    def nombre_completo(self):
+        return f"{self.nombre} {self.apellido}"
 
+    @property
+    def get_edad(self):
+        if self.fecha_nacimiento is None:
+            return "Desconocida" 
+
+        if self.fecha_fallecimiento:
+            return self.fecha_fallecimiento.year - self.fecha_nacimiento.year
+        else:
+            today = date.today()
+            age = today.year - self.fecha_nacimiento.year
+            if (today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day):
+                age -= 1
+            return age
+
+    def get_absolute_url(self):
+        return reverse('inicio:detalle_autor', kwargs={'pk': self.pk})
+    
 class Editorial(models.Model):
     nombre = models.CharField(
         max_length=100,

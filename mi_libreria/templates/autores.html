@@ -30,11 +30,13 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Inicio</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
+                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
                         </ul>
                     </div>
                 </div>
@@ -104,8 +106,8 @@
                                                     {% endif %}
                                                 </div>
                                                 <div>
-                                                    <a href="{% url 'inicio:detalle_autor' autor.id %}" class="btn btn-sm btn-outline-primary">Detalles</a>
-                                                    <a href="{% url 'inicio:editar_autor' autor.id %}" class="btn btn-sm btn-primary ms-2">Editar</a>
+                                                    <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-sm btn-outline-primary">Detalles</a>
+                                                    <a href="{% url 'inicio:editar_autor' autor.pk %}" class="btn btn-sm btn-primary ms-2">Editar</a>
                                                 </div>
                                             </div>
                                         </div>

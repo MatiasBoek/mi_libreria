@@ -1,43 +1,200 @@
 {% extends 'gestion_libros/base.html' %}
-
-{% block title %}Buscar{% endblock %}
+{% load static %}
 
 {% block content %}
-<h2>Buscar en la base de datos</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Buscar</button>
-</form>
+<nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+            <div class="container px-5">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
+                    </ul>
+                </div>
+            </div>
+    </nav>
+    <!-- Header con texto de presentación -->
+    <header class="py-5 bg-light">
+        <div class="container px-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xxl-6">
+                    <div class="text-center my-5">
+                        <h1 class="fw-bolder mb-3">Busca en nuestra biblioteca</h1>
+                        <p class="lead fw-normal text-muted mb-4">
+                            Aquí podrás buscar cualquier libro, autor o editorial. 
+                            Encuentra diferentes ediciones del mismo título, obras completas 
+                            de tus autores favoritos o todos los libros de una editorial.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+	<!-- Formulario de búsqueda -->
+    <section class="py-5">
+        <div class="container px-5">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow border-0 rounded-4 mb-5">
+                        <div class="card-body p-5">
+                            <form method="GET" action="{% url 'inicio:buscar' %}" class="needs-validation" novalidate>
+                                <div class="mb-4">
+                                    <label for="q" class="form-label fw-bold">¿Qué estás buscando?</label>
+                                    <div class="input-group">
+                                        <input type="text" 
+                                            class="form-control form-control-lg" 
+                                            id="q" 
+                                            name="q" 
+                                            placeholder="Escribe título, autor o editorial..."
+                                            value="{{ request.GET.q }}"
+                                            required>
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="bi bi-search me-2"></i> Buscar
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Ejemplo: 'Cien años de soledad', 'García Márquez' o 'Penguin'</small>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-{% if resultados %}
-    <h3 class="mt-4">Resultados:</h3>
-    
-    {% if resultados.autores %}
-    <h4>Autores:</h4>
-    <ul>
-        {% for autor in resultados.autores %}
-        <li>{{ autor.nombre }} ({{ autor.nacionalidad }})</li>
-        {% endfor %}
-    </ul>
+    <!-- Resultados de búsqueda -->
+    {% if request.GET.q %}
+    <section class="py-5 bg-light">
+        <div class="container px-5">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-10">
+                    {% if resultados.total > 0 %}
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bolder">Resultados de búsqueda</h2>
+                        <p class="lead text-muted">Mostrando {{ resultados.total }} coincidencias para "{{ request.GET.q }}"</p>
+                    </div>
+
+                    <!-- Resultados de Libros -->
+                    {% if resultados.libros %}
+                    <div class="card shadow rounded-4 mb-5">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h3 class="mb-0"><i class="bi bi-book me-2"></i> Libros encontrados</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% for libro in resultados.libros %}
+                                <div class="list-group-item p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="mb-1">{{ libro.titulo }}</h4>
+                                            <p class="mb-1">
+                                                <span class="text-muted">Autor:</span> {{ libro.autor.nombre_completo }}
+                                                <span class="mx-2">|</span>
+                                                <span class="text-muted">Editorial:</span> {{ libro.editorial.nombre }}
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="text-muted">ISBN:</span> {{ libro.isbn }}
+                                                <span class="mx-2">|</span>
+                                                <span class="text-muted">Precio:</span> ${{ libro.precio }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                            <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Resultados de Autores -->
+                    {% if resultados.autores %}
+                    <div class="card shadow rounded-4 mb-5">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h3 class="mb-0"><i class="bi bi-person me-2"></i> Autores encontrados</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% for autor in resultados.autores %}
+                                <div class="list-group-item p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="mb-1">{{ autor.nombre_completo }}</h4>
+                                            <p class="mb-1">
+                                                <span class="text-muted">Nacionalidad:</span> {{ autor.nacionalidad }}
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="text-muted">Libros en nuestro catálogo:</span> {{ autor.libro_set.count }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                            <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-outline-primary">Ver perfil</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Resultados de Editoriales -->
+                    {% if resultados.editoriales %}
+                    <div class="card shadow rounded-4">
+                        <div class="card-header bg-primary text-white py-3">
+                            <h3 class="mb-0"><i class="bi bi-building me-2"></i> Editoriales encontradas</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% for editorial in resultados.editoriales %}
+                                <div class="list-group-item p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="mb-1">{{ editorial.nombre }}</h4>
+                                            <p class="mb-1">
+                                                <span class="text-muted">País:</span> {{ editorial.pais }}
+                                            </p>
+                                            <p class="mb-0">
+                                                <span class="text-muted">Libros en nuestro catálogo:</span> {{ editorial.libro_set.count }}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                            <a href="#" class="btn btn-outline-primary">Ver catálogo</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    <div class="text-center">
+                        <div class="card shadow rounded-4 border-0">
+                            <div class="card-body py-5">
+                                <i class="bi bi-search display-1 text-muted mb-4"></i>
+                                <h3 class="fw-bolder mb-3">No se encontraron resultados</h3>
+                                <p class="lead text-muted mb-4">
+                                    No encontramos coincidencias para "<strong>{{ request.GET.q }}</strong>".
+                                    <br>Intenta con otros términos de búsqueda.
+                                </p>
+                                <a href="{% url 'inicio:buscar' %}" class="btn btn-primary px-4">
+                                    <i class="bi bi-arrow-repeat me-2"></i>Intentar nueva búsqueda
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
     {% endif %}
-    
-    {% if resultados.editoriales %}
-    <h4>Editoriales:</h4>
-    <ul>
-        {% for editorial in resultados.editoriales %}
-        <li>{{ editorial.nombre }} ({{ editorial.pais }})</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    
-    {% if resultados.libros %}
-    <h4>Libros:</h4>
-    <ul>
-        {% for libro in resultados.libros %}
-        <li>{{ libro.titulo }} - {{ libro.autor }} ({{ libro.editorial }}) - ${{ libro.precio }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-{% endif %}
 {% endblock %}
