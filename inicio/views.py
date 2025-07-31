@@ -59,10 +59,27 @@ def agregar_autor(request):
         form = AutorForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('gestion_libros:lista_autores')  # Ajusta el nombre
+            return redirect('inicio')
     else:
         form = AutorForm()
     return render(request, 'gestion_libros/agregar_autor.html', {'form': form})
+
+def agregar_editorial(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        pais = request.POST.get('pais')
+        sitio_web = request.POST.get('sitio_web')
+        fundacion = request.POST.get('fundacion')
+        
+        Editorial.objects.create(
+            nombre=nombre,
+            pais=pais,
+            sitio_web=sitio_web,
+            fundacion=fundacion
+        )
+        return redirect('listar_editoriales')
+    
+    return render(request, 'agregar_editorial.html')
 
 def listar_libros(request):
     libros = Libro.objects.all().order_by('titulo') # Obtener todos los libros

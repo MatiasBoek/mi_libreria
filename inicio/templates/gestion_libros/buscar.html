@@ -1,0 +1,43 @@
+{% extends 'gestion_libros/base.html' %}
+
+{% block title %}Buscar{% endblock %}
+
+{% block content %}
+<h2>Buscar en la base de datos</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+{% if resultados %}
+    <h3 class="mt-4">Resultados:</h3>
+    
+    {% if resultados.autores %}
+    <h4>Autores:</h4>
+    <ul>
+        {% for autor in resultados.autores %}
+        <li>{{ autor.nombre }} ({{ autor.nacionalidad }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if resultados.editoriales %}
+    <h4>Editoriales:</h4>
+    <ul>
+        {% for editorial in resultados.editoriales %}
+        <li>{{ editorial.nombre }} ({{ editorial.pais }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if resultados.libros %}
+    <h4>Libros:</h4>
+    <ul>
+        {% for libro in resultados.libros %}
+        <li>{{ libro.titulo }} - {{ libro.autor }} ({{ libro.editorial }}) - ${{ libro.precio }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endif %}
+{% endblock %}
