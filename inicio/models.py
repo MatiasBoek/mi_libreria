@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import date
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 # Define esta función fuera de tus modelos
 def get_current_year():
@@ -154,3 +155,27 @@ class Libro(models.Model):
     def clean(self):
         if len(self.titulo) < 3:
             raise ValidationError("El título debe tener al menos 3 caracteres")
+        
+class Resena(models.Model):
+    TIPO_CHOICES = [
+        ('LIBRO', 'Libro'),
+        ('AUTOR', 'Autor'),
+        ('EDITORIAL', 'Editorial'),
+        ('OTRO', 'Otro'),
+    ]    
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    libro = models.ForeignKey('Libro', on_delete=models.CASCADE, null=True, blank=True)
+    autor = models.ForeignKey('Autor', on_delete=models.CASCADE, null=True, blank=True)
+    editorial = models.ForeignKey('Editorial', on_delete=models.CASCADE, null=True, blank=True)
+    titulo = models.CharField(max_length=200)
+    contenido = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    puntuacion = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)], null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-fecha_creacion']
+    
+    def __str__(self):
+        return f"{self.titulo} por {self.usuario.username}"

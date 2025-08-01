@@ -21,23 +21,28 @@
 </head>
 <body class="d-flex flex-column h-100">
     <main class="flex-shrink-0">
-        <!-- Navigation (Igual que index.html) -->
+        <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
             <div class="container px-5">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                    <span class="fw-bolder text-primary">Book Flow</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:agregar_libro' %}">Agregar Libro</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:agregar_autor' %}">Agregar Autor</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- Formulario de Autor (Estilo como index.html) -->
+        <!-- Formulario de Autor -->
         <section class="py-5">
             <div class="container px-5">
                 <div class="row gx-5 justify-content-center">
@@ -49,7 +54,7 @@
                     </div>
                 </div>
                 <div class="row gx-5 justify-content-center">
-                    <div class="col-lg-6">
+                    <div class="col-lg-8">
                         <div class="card shadow border-0 rounded-4 mb-5">
                             <div class="card-body p-5">
                                 {% if messages %}
@@ -65,6 +70,35 @@
                                 {% if not success %}
                                 <form method="post">
                                     {% csrf_token %}
+                                    
+                                    <!-- Campos del formulario -->
+                                    <div class="mb-3">
+                                        <label for="{{ form.nombre_completo.id_for_label }}" class="form-label fw-bold">Nombre Completo</label>
+                                        {{ form.nombre_completo }}
+                                        {% if form.nombre_completo.errors %}
+                                            <div class="text-danger">{{ form.nombre_completo.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ form.nacionalidad.id_for_label }}" class="form-label fw-bold">Nacionalidad</label>
+                                            {{ form.nacionalidad }}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label fw-bold">Fecha de Nacimiento</label>
+                                            {{ form.fecha_nacimiento }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                            <label for="{{ form.fecha_fallecimiento.id_for_label }}" class="form-label fw-bold">Fecha de Fallecimiento (Opcional. Dejar en blanco si el autor aún vive)</label>
+                                            {{ form.fecha_fallecimiento }}
+                                    </div>                                    
+                                    <div class="mb-4">
+                                        <label for="{{ form.biografia.id_for_label }}" class="form-label fw-bold">Biografía</label>
+                                        {{ form.biografia }}
+                                        <div class="form-text">Escribe una breve biografía del autor</div>
+                                    </div>
         
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <a href="{% url 'inicio:inicio' %}" class="btn btn-outline-secondary me-md-2">
@@ -80,24 +114,25 @@
                                     <div class="alert alert-success mb-4">
                                         <i class="bi bi-check-circle-fill me-2"></i> ¡El autor se ha guardado con éxito!
                                     </div>
-                                <div class="d-flex justify-content-center gap-3">
-                                    <a href="{% url 'inicio:agregar_autor' %}" class="btn btn-primary">
-                                        <i class="bi bi-plus-circle me-2"></i> Agregar otro autor
-                                    </a>
-                                    <a href="{% url 'inicio:inicio' %}" class="btn btn-outline-primary">
-                                        <i class="bi bi-house-door me-2"></i> Volver al inicio
-                                    </a>
+                                    <div class="d-flex justify-content-center gap-3">
+                                        <a href="{% url 'inicio:agregar_autor' %}" class="btn btn-primary">
+                                            <i class="bi bi-plus-circle me-2"></i> Agregar otro autor
+                                        </a>
+                                        <a href="{% url 'inicio:inicio' %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-house-door me-2"></i> Volver al inicio
+                                        </a>
+                                    </div>
                                 </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-    <!-- Footer (Igual que index.html) -->
+
+    <!-- Footer -->
     <footer class="bg-white py-4 mt-auto">
         <div class="container px-5">
             <div class="row align-items-center justify-content-between flex-column flex-sm-row">

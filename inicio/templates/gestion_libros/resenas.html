@@ -1,0 +1,79 @@
+{% extends 'gestion_libros/base.html' %}
+
+{% block content %}
+<!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                        <span class="fw-bolder text-primary">Book Flow</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+<section class="py-5">
+    <div class="container px-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="text-center">
+                    <h2 class="fw-bolder">Reseñas de la comunidad</h2>
+                    <p class="lead fw-normal text-muted mb-5">
+                        Descubre lo que otros lectores opinan sobre libros, autores y editoriales
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row gx-5">
+            {% for resena in resenas %}
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">{{ resena.get_tipo_display }}</div>
+                        {% if resena.puntuacion %}
+                        <div class="mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= resena.puntuacion %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <a class="text-decoration-none link-dark stretched-link" href="{% url 'inicio:detalle_resena' resena.pk %}">
+                            <h5 class="card-title mb-3">{{ resena.titulo }}</h5>
+                        </a>
+                        <p class="card-text mb-0">{{ resena.contenido|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-flex align-items-center">
+                            <div class="small">
+                                <div class="fw-bold">{{ resena.usuario.username }}</div>
+                                <div class="text-muted">{{ resena.fecha_creacion|date:"d M, Y" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if user.is_authenticated %}
+        <div class="text-center mt-5">
+            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'inicio:crear_resena' %}">
+                <i class="bi bi-pencil me-2"></i>Escribir reseña
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

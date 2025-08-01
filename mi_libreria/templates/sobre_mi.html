@@ -1,0 +1,137 @@
+{% extends 'gestion_libros/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                        <span class="fw-bolder text-primary">Book Flow</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:inicio' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+<header class="py-5">
+    <div class="container px-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xxl-6">
+                <div class="text-center my-5">
+                    <h1 class="fw-bolder mb-3">Sobre Mí</h1>
+                    <p class="lead fw-normal text-muted mb-4">
+                        Un poco sobre quién soy y mi pasión por los libros
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Sección sobre mí -->
+<section class="py-5 bg-light" id="about">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6">
+                <img class="img-fluid rounded-circle mb-5 mb-lg-0" 
+                     src="{% static 'assets/Mati.jpg' %}" 
+                     alt="Tu foto" style="max-width: 300px;" />
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bolder">Matías Boek</h2>
+                <p class="lead fw-normal text-muted mb-0">
+                    Desarrollador y amante de los libros
+                </p>
+                <div class="mt-4">
+                    <p class="mb-3">
+                        ¡Hola! Soy Matías, el creador de Book Flow. Desde pequeño siempre he estado 
+                        fascinado por el mundo de los libros y cómo conectan a las personas con 
+                        historias, conocimientos y experiencias.
+                    </p>
+                    <p class="mb-3">
+                        Aunque soy licenciado en ciencias ambientales, he decidido estudiar ciencias de datos
+                        para ampliar mis conocimientos y oportunidades laborales. Todo este tema es realmente 
+                        muy nuevo para mi. 
+                    </p>
+                    <p class="mb-4">
+                        Espero que el proyecto les guste ya que le he dedicado mucho tiempo, paciencia y sacrificio
+                        para que salga bien. 
+
+                        Gracias. Un abrazo
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'inicio:inicio' %}">
+                            <i class="bi bi-house-door me-2"></i>Volver al inicio
+                        </a>
+                        <a class="btn btn-outline-primary btn-lg px-4" href="{% url 'inicio:contacto' %}">
+                            <i class="bi bi-envelope me-2"></i>Contáctame
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de habilidades/intereses -->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="text-center">
+                    <h2 class="fw-bolder">Mis habilidades</h2>
+                    <p class="lead fw-normal text-muted mb-5">
+                        Algunas de las tecnologías y habilidades que utilizo en este proyecto
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row gx-5">
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Backend</div>
+                        <h5 class="card-title mb-3">Django & Python</h5>
+                        <p class="card-text mb-0">
+                            Desarrollo de aplicaciones web robustas con Django y Python.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Frontend</div>
+                        <h5 class="card-title mb-3">HTML, CSS & Bootstrap</h5>
+                        <p class="card-text mb-0">
+                            Creación de interfaces atractivas y responsivas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-5">
+                <div class="card h-100 shadow border-0">
+                    <div class="card-body p-4">
+                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Base de datos</div>
+                        <h5 class="card-title mb-3">PostgreSQL</h5>
+                        <p class="card-text mb-0">
+                            Diseño y gestión de bases de datos relacionales.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

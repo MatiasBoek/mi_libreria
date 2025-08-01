@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Autor, Editorial, Libro
-from .forms import AutorForm, EditorialForm, LibroForm, BusquedaForm
+from .models import Autor, Editorial, Libro, Resena
+from .forms import AutorForm, EditorialForm, LibroForm, BusquedaForm, ResenaForm
 from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+
 
 def inicio(request):
     return render(request, 'index.html')
@@ -13,7 +18,7 @@ def agregar_libro(request):
         form = LibroForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('gestion_libros:index')  # Ajusta este nombre según tus URLs
+            return redirect('inicio:listar_libros')  # Ajusta este nombre según tus URLs
     else:
         form = LibroForm()
     
@@ -26,6 +31,34 @@ def listar_libros(request):
         'title': 'Lista de Libros'
     }
     return render(request, 'libros.html', context)
+
+# In inicio/views.py
+
+def detalle_libro(request, pk):
+    """
+    Vista para mostrar los detalles de un libro específico.
+    """
+    libro = get_object_or_404(Libro, pk=pk)
+    return render(request, 'gestion_libros/detalle_libro.html', {'libro': libro})
+
+def editar_libro(request, pk):
+    """
+    Vista para editar un libro existente.
+    """
+    libro = get_object_or_404(Libro, pk=pk)
+    if request.method == 'POST':
+        form = LibroForm(request.POST, instance=libro)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'El libro se ha actualizado con éxito.')
+            return redirect('inicio:detalle_libro', pk=libro.pk)
+    else:
+        form = LibroForm(instance=libro)
+    
+    return render(request, 'gestion_libros/editar_libro.html', {
+        'form': form,
+        'libro': libro
+    })
 
 # AUTOR
 
@@ -119,5 +152,52 @@ def contacto(request):
     }
     
     return render(request, 'contacto.html', context)
+
+# SOBRE MI
+def sobre_mi(request):
+    return render(request, 'sobre_mi.html')
+
+# BLOG
+
+def listar_resenas(request):
+    resenas = Resena.objects.all()
+    return render(request, 'gestion_libros/resenas.html', {'resenas': resenas})
+
+def registro(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('inicio:inicio')
+    else:
+        form = UserCreationForm()
+    return render(request, 'gestion_libros/registro.html', {'form': form})
+
+def perfil_usuario(request):
+    return render(request, 'gestion_libros/perfil.html', {'user': request.user})
+
+@login_required
+def crear_resena(request):
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.usuario = request.user
+            resena.save()
+            return redirect('inicio:listar_resenas')
+    else:        
+        form = ResenaForm()    
+    
+    return render(request, 'gestion_libros/crear_resena.html', {'form': form})
+
+def detalle_resena(request, pk):
+    resena = get_object_or_404(Resena, pk=pk)
+    return render(request, 'gestion_libros/detalle_resena.html', {'resena': resena})
+
+@login_required
+def mis_resenas(request):
+    resenas = Resena.objects.filter(usuario=request.user)
+    return render(request, 'gestion_libros/mis_resenas.html', {'resenas': resenas})
 
 

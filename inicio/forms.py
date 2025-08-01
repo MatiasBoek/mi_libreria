@@ -1,15 +1,18 @@
 from django import forms
-from .models import Autor, Editorial, Libro
-
-from django import forms
-from .models import Autor
-
+from .models import Autor, Editorial, Libro, Resena
 class AutorForm(forms.ModelForm):
     class Meta:
         model = Autor
         fields = '__all__'
         widgets = {
             'fecha_nacimiento': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control',
+                    'placeholder': 'Seleccione una fecha'
+                }
+            ),
+            'fecha_fallecimiento': forms.DateInput(
                 attrs={
                     'type': 'date',
                     'class': 'form-control',
@@ -84,3 +87,20 @@ class LibroForm(forms.ModelForm):
 
 class BusquedaForm(forms.Form):
     termino_busqueda = forms.CharField(label='Buscar', max_length=100)
+    
+# BLOG
+
+
+class ResenaForm(forms.ModelForm):
+    class Meta:
+        model = Resena
+        fields = ['tipo', 'libro', 'autor', 'editorial', 'titulo', 'contenido', 'puntuacion']
+        widgets = {
+            'contenido': forms.Textarea(attrs={'rows': 5}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['libro'].required = False
+        self.fields['autor'].required = False
+        self.fields['editorial'].required = False
