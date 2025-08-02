@@ -138,7 +138,6 @@ class Libro(models.Model):
         verbose_name="Disponible",
         default=True
     )
-
     class Meta:
         verbose_name = "Libro"
         verbose_name_plural = "Libros"
@@ -179,3 +178,13 @@ class Resena(models.Model):
     
     def __str__(self):
         return f"{self.titulo} por {self.usuario.username}"
+    
+class Page(models.Model):
+    titulo = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    contenido = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.titulo

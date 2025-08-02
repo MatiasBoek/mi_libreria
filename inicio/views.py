@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Autor, Editorial, Libro, Resena
+from .models import Autor, Editorial, Libro, Resena, Page
 from .forms import AutorForm, EditorialForm, LibroForm, BusquedaForm, ResenaForm
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,9 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
+# Page
+
 
 def inicio(request):
-    return render(request, 'index.html')
+    return render(request, 'gestion_libros/index.html')
 
 # LIBRO
 
@@ -30,7 +32,7 @@ def listar_libros(request):
         'libros': libros,
         'title': 'Lista de Libros'
     }
-    return render(request, 'libros.html', context)
+    return render(request, 'gestion_libros/libros.html', context)
 
 # In inicio/views.py
 
@@ -81,7 +83,7 @@ def listar_autores(request):
         'autores': autores,
         'title': 'Lista de Autores'
     }
-    return render(request, 'autores.html', context) 
+    return render(request, 'gestion_libros/autores.html', context) 
 
    
 def agregar_editorial(request):
@@ -140,7 +142,7 @@ def listar_editoriales(request):
         'editoriales': editoriales,
         'title': 'Lista de Editoriales'
     }
-    return render(request, 'editoriales.html', context) # Necesitarás crear esta plantilla
+    return render(request, 'gestion_libros/editoriales.html', context) # Necesitarás crear esta plantilla
 
 # CONTACTO
 def contacto(request):
@@ -151,11 +153,11 @@ def contacto(request):
         'title': 'Contacto',
     }
     
-    return render(request, 'contacto.html', context)
+    return render(request, 'gestion_libros/contacto.html', context)
 
 # SOBRE MI
 def sobre_mi(request):
-    return render(request, 'sobre_mi.html')
+    return render(request, 'gestion_libros/sobre_mi.html')
 
 # BLOG
 
@@ -199,5 +201,14 @@ def detalle_resena(request, pk):
 def mis_resenas(request):
     resenas = Resena.objects.filter(usuario=request.user)
     return render(request, 'gestion_libros/mis_resenas.html', {'resenas': resenas})
+
+def listar_paginas(request):
+    paginas = Page.objects.all()
+    return render(request, 'gestion_libros/listar_paginas.html', {'paginas': paginas})
+
+def detalle_pagina(request, pk):
+    pagina = get_object_or_404(Page, pk=pk)
+    return render(request, 'gestion_libros/detalle_pagina.html', {'pagina': pagina})
+
 
 
