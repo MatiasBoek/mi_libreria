@@ -1,0 +1,68 @@
+{% extends 'gestion_libros/base.html' %}
+
+{% block content %}
+<!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+            <div class="container px-5">
+                <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                    <span class="fw-bolder text-primary">Book Flow</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
+                    </ul>
+                </div>
+            </div>
+        </nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Registro de Usuario</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Nombre de usuario</label>
+                            {{ form.username }}
+                            <div class="form-text">Requerido. 150 caracteres o menos. Letras, dígitos y @/./+/-/_ solamente.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Contraseña</label>
+                            {{ form.password1 }}
+                            <div class="form-text">
+                                <ul>
+                                    <li>No puede ser similar a tu información personal.</li>
+                                    <li>Debe contener al menos 8 caracteres.</li>
+                                    <li>No puede ser una contraseña común.</li>
+                                    <li>No puede ser enteramente numérica.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Confirmación de contraseña</label>
+                            {{ form.password2 }}
+                            <div class="form-text">Ingresa la misma contraseña que antes, para verificación.</div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Registrarse</button>
+                        </div>
+                    </form>
+                    <div class="mt-3 text-center">
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'inicio:login' %}">Inicia sesión</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

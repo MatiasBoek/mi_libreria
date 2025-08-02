@@ -1,205 +1,213 @@
 {% extends 'gestion_libros/base.html' %}
 {% load static %}
 
+{% block title %}Buscar | Book Flow{% endblock %}
+
 {% block content %}
-<!-- Navigation-->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
-                <div class="container px-5">
-                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
-                        <span class="fw-bolder text-primary">Book Flow</span>
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+<html lang="es">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Catálogo de libros - Book Flow" />
+        <meta name="author" content="" />
+        <title>Book Flow - Catálogo de Libros</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Custom Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+    <main class="d-flex flex-column h-100 bg-light">
+    <!-- Page Content-->
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Buscar Libros</span></h1>
+            <p class="lead fw-normal text-muted mb-0">Encuentra libros en nuestro catálogo</p>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <form class="d-flex" method="get" action="{% url 'inicio:buscar' %}">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar libros, autores..." 
+                           value="{{ request.GET.q }}" aria-label="Buscar" required>
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-search me-1"></i> Buscar
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-    <!-- Header con texto de presentación -->
-    <header class="py-5 bg-light">
-        <div class="container px-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 col-xxl-6">
-                    <div class="text-center my-5">
-                        <h1 class="fw-bolder mb-3">Busca en nuestra biblioteca</h1>
-                        <p class="lead fw-normal text-muted mb-4">
-                            Aquí podrás buscar cualquier libro, autor o editorial. 
-                            Encuentra diferentes ediciones del mismo título, obras completas 
-                            de tus autores favoritos o todos los libros de una editorial.
-                        </p>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </header>
-	<!-- Formulario de búsqueda -->
-    <section class="py-5">
-        <div class="container px-5">
-            <div class="row gx-5 justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card shadow border-0 rounded-4 mb-5">
-                        <div class="card-body p-5">
-                            <form method="GET" action="{% url 'inicio:buscar' %}" class="needs-validation" novalidate>
-                                <div class="mb-4">
-                                    <label for="q" class="form-label fw-bold">¿Qué estás buscando?</label>
-                                    <div class="input-group">
-                                        <input type="text" 
-                                            class="form-control form-control-lg" 
-                                            id="q" 
-                                            name="q" 
-                                            placeholder="Escribe título, autor o editorial..."
-                                            value="{{ request.GET.q }}"
-                                            required>
-                                        <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="bi bi-search me-2"></i> Buscar
-                                        </button>
-                                    </div>
-                                    <small class="text-muted">Ejemplo: 'Cien años de soledad', 'García Márquez' o 'Penguin'</small>
-                                </div>
-                            </form>
-                        </div>
+        
+        {% if request.GET.q %}
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-11 col-xl-9 col-xxl-8">
+                {% if resultados.total > 0 %}
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h2 class="text-primary fw-bolder mb-0">
+                            {{ resultados.total }} resultado{{ resultados.total|pluralize }} para "{{ request.GET.q }}"
+                        </h2>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Resultados de búsqueda -->
-    {% if request.GET.q %}
-    <section class="py-5 bg-light">
-        <div class="container px-5">
-            <div class="row gx-5 justify-content-center">
-                <div class="col-lg-10">
-                    {% if resultados.total > 0 %}
-                    <div class="text-center mb-5">
-                        <h2 class="fw-bolder">Resultados de búsqueda</h2>
-                        <p class="lead text-muted">Mostrando {{ resultados.total }} coincidencias para "{{ request.GET.q }}"</p>
-                    </div>
-
+                    
                     <!-- Resultados de Libros -->
                     {% if resultados.libros %}
-                    <div class="card shadow rounded-4 mb-5">
-                        <div class="card-header bg-primary text-white py-3">
-                            <h3 class="mb-0"><i class="bi bi-book me-2"></i> Libros encontrados</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="list-group list-group-flush">
-                                {% for libro in resultados.libros %}
-                                <div class="list-group-item p-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <h4 class="mb-1">{{ libro.titulo }}</h4>
-                                            <p class="mb-1">
-                                                <span class="text-muted">Autor:</span> {{ libro.autor.nombre_completo }}
-                                                <span class="mx-2">|</span>
-                                                <span class="text-muted">Editorial:</span> {{ libro.editorial.nombre }}
-                                            </p>
-                                            <p class="mb-0">
-                                                <span class="text-muted">ISBN:</span> {{ libro.isbn }}
-                                                <span class="mx-2">|</span>
-                                                <span class="text-muted">Precio:</span> ${{ libro.precio }}
-                                            </p>
+                    <section class="mb-5">
+                        <h3 class="fw-bolder mb-4"><i class="bi bi-book me-2"></i> Libros</h3>
+                        {% for libro in resultados.libros %}
+                        <div class="card shadow border-0 rounded-4 mb-4">
+                            <div class="card-body p-5">
+                                <div class="row align-items-center gx-5">
+                                    <div class="col-md-3 text-center mb-4 mb-md-0">
+                                        <div class="bg-light p-4 rounded-4">
+                                            {% if libro.portada %}
+                                                <img src="{{ libro.portada.url }}" alt="Portada de {{ libro.titulo }}" 
+                                                     class="img-fluid rounded shadow-sm" style="max-height: 220px;">
+                                            {% else %}
+                                                <img src="{% static 'assets/default-book.png' %}" alt="Portada no disponible" 
+                                                     class="img-fluid rounded shadow-sm" style="max-height: 220px;">
+                                            {% endif %}
                                         </div>
-                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                            <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3 class="fw-bolder">{{ libro.titulo }}</h3>
+                                        <p class="text-muted mb-2">{{ libro.autor.nombre_completo }}</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            {% for genero in libro.generos.all %}
+                                                <span class="badge bg-primary">{{ genero.nombre }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        <p>{{ libro.descripcion|truncatewords:30 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">Editorial: </span>{{ libro.editorial.nombre }}
+                                                <span class="mx-2">|</span>
+                                                <span class="fw-bold">Precio: </span>${{ libro.precio }}
+                                            </div>
+                                            <div>
+                                                <a href="{% url 'inicio:detalle_libro' libro.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye-fill me-1"></i> Detalles
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
                         </div>
-                    </div>
+                        {% endfor %}
+                    </section>
                     {% endif %}
-
+                    
                     <!-- Resultados de Autores -->
                     {% if resultados.autores %}
-                    <div class="card shadow rounded-4 mb-5">
-                        <div class="card-header bg-primary text-white py-3">
-                            <h3 class="mb-0"><i class="bi bi-person me-2"></i> Autores encontrados</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="list-group list-group-flush">
-                                {% for autor in resultados.autores %}
-                                <div class="list-group-item p-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <h4 class="mb-1">{{ autor.nombre_completo }}</h4>
-                                            <p class="mb-1">
-                                                <span class="text-muted">Nacionalidad:</span> {{ autor.nacionalidad }}
-                                            </p>
-                                            <p class="mb-0">
-                                                <span class="text-muted">Libros en nuestro catálogo:</span> {{ autor.libro_set.count }}
-                                            </p>
+                    <section class="mb-5">
+                        <h3 class="fw-bolder mb-4"><i class="bi bi-person me-2"></i> Autores</h3>
+                        {% for autor in resultados.autores %}
+                        <div class="card shadow border-0 rounded-4 mb-4">
+                            <div class="card-body p-5">
+                                <div class="row align-items-center gx-5">
+                                    <div class="col-md-3 text-center mb-4 mb-md-0">
+                                        <div class="bg-light p-4 rounded-4">
+                                            {% if autor.foto %}
+                                                <img src="{{ autor.foto.url }}" alt="Foto de {{ autor.nombre_completo }}" 
+                                                     class="img-fluid rounded-circle shadow-sm" style="max-height: 180px;">
+                                            {% else %}
+                                                <img src="{% static 'assets/default-author.png' %}" alt="Foto no disponible" 
+                                                     class="img-fluid rounded-circle shadow-sm" style="max-height: 180px;">
+                                            {% endif %}
                                         </div>
-                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                            <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-outline-primary">Ver perfil</a>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3 class="fw-bolder">{{ autor.nombre_completo }}</h3>
+                                        <p class="text-muted mb-2">{{ autor.nacionalidad }}</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-primary">{{ autor.libro_set.count }} libro{{ autor.libro_set.count|pluralize }}</span>
+                                        </div>
+                                        <p>{{ autor.biografia|truncatewords:30 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">Nacimiento: </span>{{ autor.fecha_nacimiento|date:"Y" }}
+                                            </div>
+                                            <div>
+                                                <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-person-lines-fill me-1"></i> Perfil
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
                         </div>
-                    </div>
+                        {% endfor %}
+                    </section>
                     {% endif %}
-
+                    
                     <!-- Resultados de Editoriales -->
                     {% if resultados.editoriales %}
-                    <div class="card shadow rounded-4">
-                        <div class="card-header bg-primary text-white py-3">
-                            <h3 class="mb-0"><i class="bi bi-building me-2"></i> Editoriales encontradas</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="list-group list-group-flush">
-                                {% for editorial in resultados.editoriales %}
-                                <div class="list-group-item p-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <h4 class="mb-1">{{ editorial.nombre }}</h4>
-                                            <p class="mb-1">
-                                                <span class="text-muted">País:</span> {{ editorial.pais }}
-                                            </p>
-                                            <p class="mb-0">
-                                                <span class="text-muted">Libros en nuestro catálogo:</span> {{ editorial.libro_set.count }}
-                                            </p>
+                    <section class="mb-5">
+                        <h3 class="fw-bolder mb-4"><i class="bi bi-building me-2"></i> Editoriales</h3>
+                        {% for editorial in resultados.editoriales %}
+                        <div class="card shadow border-0 rounded-4 mb-4">
+                            <div class="card-body p-5">
+                                <div class="row align-items-center gx-5">
+                                    <div class="col-md-3 text-center mb-4 mb-md-0">
+                                        <div class="bg-light p-4 rounded-4">
+                                            {% if editorial.logo %}
+                                                <img src="{{ editorial.logo.url }}" alt="Logo de {{ editorial.nombre }}" 
+                                                     class="img-fluid rounded shadow-sm" style="max-height: 180px;">
+                                            {% else %}
+                                                <img src="{% static 'assets/default-publisher.png' %}" alt="Logo no disponible" 
+                                                     class="img-fluid rounded shadow-sm" style="max-height: 180px;">
+                                            {% endif %}
                                         </div>
-                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                            <a href="#" class="btn btn-outline-primary">Ver catálogo</a>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h3 class="fw-bolder">{{ editorial.nombre }}</h3>
+                                        <p class="text-muted mb-2">{{ editorial.pais }}</p>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <span class="badge bg-primary">{{ editorial.libro_set.count }} libro{{ editorial.libro_set.count|pluralize }}</span>
+                                        </div>
+                                        <p>{{ editorial.descripcion|truncatewords:30 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="fw-bold">Fundación: </span>{{ editorial.fundacion|date:"Y" }}
+                                            </div>
+                                            <div>
+                                                <a href="#" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-collection me-1"></i> Catálogo
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
                         </div>
-                    </div>
+                        {% endfor %}
+                    </section>
                     {% endif %}
-
-                    {% else %}
-                    <div class="text-center">
-                        <div class="card shadow rounded-4 border-0">
-                            <div class="card-body py-5">
-                                <i class="bi bi-search display-1 text-muted mb-4"></i>
-                                <h3 class="fw-bolder mb-3">No se encontraron resultados</h3>
-                                <p class="lead text-muted mb-4">
-                                    No encontramos coincidencias para "<strong>{{ request.GET.q }}</strong>".
-                                    <br>Intenta con otros términos de búsqueda.
-                                </p>
-                                <a href="{% url 'inicio:buscar' %}" class="btn btn-primary px-4">
-                                    <i class="bi bi-arrow-repeat me-2"></i>Intentar nueva búsqueda
-                                </a>
-                            </div>
+                    
+                {% else %}
+                    <!-- Sin resultados -->
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="bi bi-search-x display-1 text-muted"></i>
                         </div>
+                        <h3 class="fw-bolder mb-3">No se encontraron resultados</h3>
+                        <p class="lead text-muted mb-4">
+                            No hay coincidencias para "<strong>{{ request.GET.q }}</strong>"
+                        </p>
+                        <a href="{% url 'inicio:buscar' %}" class="btn btn-primary px-4">
+                            <i class="bi bi-arrow-repeat me-2"></i> Intentar de nuevo
+                        </a>
                     </div>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
-    </section>
-    {% endif %}
+        {% endif %}
+    </div>
+</main>
+</html>
 {% endblock %}

@@ -1,81 +1,205 @@
 {% extends "gestion_libros/base.html" %}
 {% load static %}
 
+{% block title %}Agregar Editorial | Book Flow{% endblock %}
+
 {% block content %}
-<!-- Navigation-->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
-                <div class="container px-5">
-                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
-                        <span class="fw-bolder text-primary">Book Flow</span>
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
-                        </ul>
+<html lang="es">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Catálogo de libros - Book Flow" />
+        <meta name="author" content="" />
+        <title>Book Flow - Catálogo de Libros</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Custom Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+<main class="d-flex flex-column h-100 bg-light">
+    <!-- Page Content-->
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Agregar Editorial</span></h1>
+            <p class="lead fw-normal text-muted mb-0">Complete los datos de la nueva editorial</p>
+        </div>
+        
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <!-- Form Card -->
+                <div class="card shadow border-0 rounded-4 mb-5">
+                    <div class="card-body p-5">
+                        <form method="post" enctype="multipart/form-data" id="editorial-form">
+                            {% csrf_token %}
+                            
+                            <!-- Nombre -->
+                            <div class="mb-4">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Nombre de la Editorial</label>
+                                <input type="text" class="form-control" id="{{ form.nombre.id_for_label }}" 
+                                       name="{{ form.nombre.name }}" value="{{ form.nombre.value|default:'' }}" required>
+                                {% if form.nombre.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.nombre.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- País -->
+                            <div class="mb-4">
+                                <label for="{{ form.pais.id_for_label }}" class="form-label fw-bold fs-5 mb-3">País</label>
+                                <input type="text" class="form-control" id="{{ form.pais.id_for_label }}" 
+                                       name="{{ form.pais.name }}" value="{{ form.pais.value|default:'' }}">
+                                {% if form.pais.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.pais.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Año de Fundación (con validación mejorada) -->
+                            <div class="mb-4">
+                                <label for="{{ form.fundacion.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Año de Fundación</label>
+                                <input type="number" class="form-control" id="{{ form.fundacion.id_for_label }}" 
+                                       name="{{ form.fundacion.name }}" value="{{ form.fundacion.value|default:'' }}"
+                                       min="1000" max="{% now 'Y' %}" 
+                                       pattern="\d{4}" 
+                                       oninput="validarAno(this)"
+                                       required>
+                                <div class="form-text">Ingrese un año de 4 dígitos (ej: 1995)</div>
+                                <div id="ano-error" class="invalid-feedback d-none">
+                                    Por favor ingrese un año válido de 4 dígitos (entre 1000 y {% now 'Y' %})
+                                </div>
+                                {% if form.fundacion.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fundacion.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Sitio Web -->
+                            <div class="mb-4">
+                                <label for="{{ form.sitio_web.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Sitio Web</label>
+                                <input type="url" class="form-control" id="{{ form.sitio_web.id_for_label }}" 
+                                       name="{{ form.sitio_web.name }}" value="{{ form.sitio_web.value|default:'' }}"
+                                       placeholder="https://ejemplo.com">
+                                {% if form.sitio_web.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.sitio_web.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Logo -->
+                            <div class="mb-4">
+                                <label for="{{ form.logo.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Logo</label>
+                                <input type="file" class="form-control" id="{{ form.logo.id_for_label }}" 
+                                       name="{{ form.logo.name }}" accept="image/*">
+                                {% if form.logo.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.logo.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Suba una imagen cuadrada para mejor visualización</div>
+                            </div>
+                            
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Descripción</label>
+                                <textarea class="form-control" id="{{ form.descripcion.id_for_label }}" 
+                                          name="{{ form.descripcion.name }}" rows="4">{{ form.descripcion.value|default:'' }}</textarea>
+                                {% if form.descripcion.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.descripcion.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between mt-5">
+                                <a href="{% url 'inicio:listar_editoriales' %}" class="btn btn-outline-secondary px-4">
+                                    <i class="bi bi-arrow-left me-2"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-save me-2"></i> Guardar Editorial
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </nav>
-<div class="container px-5 my-5">
-    <div class="row gx-5 justify-content-center">
-        <div class="col-lg-8 col-xl-6">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Agregar Nueva Editorial</span></h2>
-                <p class="lead fw-normal text-muted mb-0">Complete los datos de la editorial</p>
             </div>
         </div>
     </div>
-    <div class="row gx-5 justify-content-center">
-        <div class="col-lg-6">
-            <div class="card shadow border-0 rounded-4 mb-5">
-                <div class="card-body p-5">
-                    <form method="post">
-                        {% csrf_token %}
-                        
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ field.errors|join:", " }}
-                            </div>
-                            {% endif %}
-                            {% if field.help_text %}
-                            <small class="text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                        
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'inicio:listar_editoriales' %}" class="btn btn-outline-secondary me-md-2">
-                                <i class="bi bi-arrow-left"></i> Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Guardar Editorial
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+</main>
 
 <style>
+    .form-control, .form-select, .form-control-file {
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        width: 100%;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
     .is-invalid {
         border-color: #dc3545;
     }
     .invalid-feedback {
         color: #dc3545;
-        display: block;
-        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+    textarea.form-control {
+        min-height: 120px;
+    }
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 </style>
+
+<script>
+function validarAno(input) {
+    const errorDiv = document.getElementById('ano-error');
+    const ano = input.value;
+    
+    // Validar que tenga exactamente 4 dígitos numéricos
+    const regex = /^\d{4}$/;
+    
+    if (!regex.test(ano) || ano < 1000 || ano > new Date().getFullYear()) {
+        input.classList.add('is-invalid');
+        errorDiv.classList.remove('d-none');
+        errorDiv.classList.add('d-block');
+    } else {
+        input.classList.remove('is-invalid');
+        errorDiv.classList.add('d-none');
+        errorDiv.classList.remove('d-block');
+    }
+}
+
+// Validación adicional al enviar el formulario
+document.getElementById('editorial-form').addEventListener('submit', function(event) {
+    const anoInput = document.getElementById('{{ form.fundacion.id_for_label }}');
+    const ano = anoInput.value;
+    const regex = /^\d{4}$/;
+    
+    if (!regex.test(ano) || ano < 1000 || ano > new Date().getFullYear()) {
+        event.preventDefault();
+        anoInput.classList.add('is-invalid');
+        document.getElementById('ano-error').classList.remove('d-none');
+        document.getElementById('ano-error').classList.add('d-block');
+        anoInput.focus();
+    }
+});
+</script>
 {% endblock %}

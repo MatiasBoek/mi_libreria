@@ -1,127 +1,84 @@
 {% extends "gestion_libros/base.html" %}
 {% load static %}
 
-{% block content %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Editoriales - Book Flow</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
-    <!-- Custom Google font-->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-    <!-- Bootstrap icons-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-</head>
-<body class="d-flex flex-column h-100">
-    <main class="flex-shrink-0">
-        <!-- Navigation (Igual que index.html) -->
-        <!-- Navigation-->
-            <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
-                <div class="container px-5">
-                    <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
-                        <span class="fw-bolder text-primary">Book Flow</span>
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+{% block title %}Editoriales | Book Flow{% endblock %}
 
-        <!-- Listado de Editoriales -->
-        <section class="py-5">
-            <div class="container px-5">
-                <!-- Sección de título y botón para agregar -->
-                <div class="row gx-5 justify-content-between align-items-center mb-5">
-                    <div class="col-lg-8 col-xl-6">
-                        <h2 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Listado de Editoriales</span></h2>
-                        <p class="lead fw-normal text-muted mb-0">Todas las editoriales disponibles</p>
-                    </div>
-                    <div class="col-lg-4 col-xl-3 text-end">
-                        <a href="{% url 'inicio:agregar_editorial' %}" class="btn btn-primary btn-lg px-4 py-2">
-                            <i class="bi bi-plus-circle me-2"></i>Agregar Editorial
-                        </a>
-                    </div>
+{% block content %}
+<html lang="es">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Catálogo de libros - Book Flow" />
+        <meta name="author" content="" />
+        <title>Book Flow - Catálogo de Libros</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Custom Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+    <main class="flex-shrink-0">
+    <!-- Listado de Editoriales -->
+    <section class="py-5">
+        <div class="container px-5">
+            <!-- Sección de título y botón para agregar -->
+            <div class="row gx-5 justify-content-between align-items-center mb-5">
+                <div class="col-lg-8 col-xl-6">
+                    <h2 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Listado de Editoriales</span></h2>
+                    <p class="lead fw-normal text-muted mb-0">Todas las editoriales disponibles</p>
                 </div>
-                
-                <!-- Listado de editoriales -->
-                <div class="row gx-5">
-                    {% for editorial in editoriales %}
-                    <div class="col-lg-4 mb-5">
-                        <div class="card h-100 shadow border-0">
-                            <div class="card-body p-4">
-                                <div class="badge bg-primary bg-gradient rounded-pill mb-2">Editorial</div>
-                                <h5 class="card-title mb-3">{{ editorial.nombre }}</h5>
-                                {% if editorial.pais %}
-                                <p class="card-text text-muted mb-0">
-                                    <i class="bi bi-globe me-1"></i> {{ editorial.pais }}
-                                </p>
-                                {% endif %}
-                                {% if editorial.sitio_web %}
-                                <p class="card-text text-muted">
-                                    <i class="bi bi-link-45deg me-1"></i> 
-                                    <a href="{{ editorial.sitio_web }}" target="_blank">Sitio web</a>
-                                </p>
-                                {% endif %}
-                            </div>
-                            <div class="card-footer bg-transparent border-top-0">
-                                <div class="d-flex align-items-end justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="small">
-                                            <div class="text-muted">Fundada en {{ editorial.fundacion|date:"Y" }}</div>
-                                        </div>
+                <div class="col-lg-4 col-xl-3 text-end">
+                    <a href="{% url 'inicio:agregar_editorial' %}" class="btn btn-primary btn-lg px-4 py-2">
+                        <i class="bi bi-plus-circle me-2"></i>Agregar Editorial
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Listado de editoriales -->
+            <div class="row gx-5">
+                {% for editorial in editoriales %}
+                <div class="col-lg-4 mb-5">
+                    <div class="card h-100 shadow border-0">
+                        <div class="card-body p-4">
+                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">Editorial</div>
+                            <h5 class="card-title mb-3">{{ editorial.nombre }}</h5>
+                            {% if editorial.pais %}
+                            <p class="card-text text-muted mb-0">
+                                <i class="bi bi-globe me-1"></i> {{ editorial.pais }}
+                            </p>
+                            {% endif %}
+                            {% if editorial.sitio_web %}
+                            <p class="card-text text-muted">
+                                <i class="bi bi-link-45deg me-1"></i> 
+                                <a href="{{ editorial.sitio_web }}" target="_blank">Sitio web</a>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="small">
+                                        <div class="text-muted">Fundada en {{ editorial.fundacion|date:"Y" }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% empty %}
-                    <div class="col-12 text-center">
-                        <div class="alert alert-info" role="alert">
-                            No hay editoriales registradas todavía.
-                        </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-info" role="alert">
+                        No hay editoriales registradas todavía.
                     </div>
-                    {% endfor %}
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer (Igual que index.html) -->
-    <footer class="bg-white py-4 mt-auto">
-        <div class="container px-5">
-            <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                <div class="col-auto"><div class="small m-0">Copyright &copy; Book Flow 2025</div></div>
-                <div class="col-auto">
-                    <a class="small" href="#!">Privacy</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">Terms</a>
-                    <span class="mx-1">&middot;</span>
-                    <a class="small" href="#!">Contact</a>
-                </div>
+                {% endfor %}
             </div>
         </div>
-    </footer>
-
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="{% static 'js/scripts.js' %}"></script>
-</body>
-</html>
+    </section>
+</main>
 {% endblock %}

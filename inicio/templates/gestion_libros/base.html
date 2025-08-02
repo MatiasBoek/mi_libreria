@@ -1,63 +1,83 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Book Flow - Plataforma de libros, autores y editoriales">
     <title>{% block title %}Book Flow{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts (Plus Jakarta Sans) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Bloque para CSS personalizado -->
+    {% block extra_css %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    {% endblock %}
+    
     <style>
-        .navbar-brand {
-            font-weight: 700;
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .dropdown-item:active {
-            background-color: #0d6efd;
+        .text-gradient {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .profile-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1rem;
         }
     </style>
 </head>
-<body>
-    <!-- Barra de navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-        <div class="container">
+<body class="d-flex flex-column h-100">
+    <!-- Navbar (versión moderna de index.html) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+        <div class="container px-5">
+            <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
+                <span class="fw-bolder text-primary">Book Flow</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
-            </button>            
-            <div class="collapse navbar-collapse" id="navbarContent">                
-                <!-- Menú de autenticación -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
+                </ul>
+                
+                <!-- Menú de usuario (heredado de tu base.html original) -->
+                <ul class="navbar-nav mb-2 mb-lg-0 user-menu">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle me-1"></i>
-                            <span class="d-none d-lg-inline">{{ user.username }}</span>
+                            <span>{{ user.username }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'inicio:perfil' %}">
-                                    <i class="bi bi-person me-2"></i>Mi Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'inicio:mis_resenas' %}">
-                                    <i class="bi bi-journal-text me-2"></i>Mis Reseñas
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'inicio:crear_resena' %}">
-                                    <i class="bi bi-plus-circle me-2"></i>Nueva Reseña
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item" href="{% url 'inicio:perfil' %}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inicio:mis_resenas' %}"><i class="bi bi-journal-text me-2"></i>Mis Reseñas</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inicio:crear_resena' %}"><i class="bi bi-plus-circle me-2"></i>Nueva Reseña</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{% url 'inicio:logout' %}">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-                                </a>
-                            </li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'inicio:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
                         </ul>
                     </li>
                     {% else %}
@@ -78,27 +98,41 @@
     </nav>
 
     <!-- Contenido principal -->
-    <div class="container mt-2 mb-5">
-        {% block content %}{% endblock %}
-    </div>
+    <main class="flex-shrink-0">
+        <div class="container mt-2 mb-5">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-    <!-- Pie de página -->
+    <!-- Footer (estilo moderno) -->
     <footer class="bg-white py-4 mt-auto">
-            <div class="container px-5">
-                <div class="row">
+        <div class="container px-5">
+            <div class="row">
                 <div class="col-md-6 text-center text-md-start">
-                    <div class="col-auto"><div class="small m-0">Copyright &copy; Book Flow 2025</div></div>
+                    <div class="small m-0">Copyright &copy; Book Flow {% now "Y" %}</div>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <a href="{% url 'inicio:listar_paginas' %}" class="text-decoration-none me-3" >Páginas</a>
                     <a href="#" class="text-decoration-none me-3">Términos</a>
                     <a href="#" class="text-decoration-none me-3">Privacidad</a>
                     <a href="{% url 'inicio:contacto' %}" class="text-decoration-none">Contacto</a>
                 </div>
             </div>
-            </div>
-        </footer>
+        </div>
+    </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bloque para JS personalizado -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
