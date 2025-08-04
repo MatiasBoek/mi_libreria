@@ -1,35 +1,131 @@
 {% extends 'gestion_libros/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión | Book Flow{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Iniciar Sesión</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Nombre de usuario</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+{% include 'breadcrumbs.html' %}
+
+<main class="d-flex flex-column h-100 bg-light">
+    <!-- Page Content -->
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Iniciar Sesión</span></h1>
+            <p class="lead fw-normal text-muted mb-0">Accede a tu cuenta de Book Flow</p>
+        </div>
+        
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-6 col-xl-5">
+                <!-- Login Card -->
+                <div class="card shadow border-0 rounded-4 mb-5">
+                    <div class="card-header bg-primary text-white py-3 rounded-top-4">
+                        <h3 class="fw-bolder mb-0 text-center">
+                            <i class="bi bi-person-fill me-2"></i>Ingreso de Usuarios
+                        </h3>
+                    </div>
+                    <div class="card-body p-5">
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Mostrar errores generales -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Campo Usuario -->
+                            <div class="mb-4">
+                                <label for="username" class="form-label fw-bold fs-5 mb-3">
+                                    <i class="bi bi-person-circle me-2"></i>Nombre de usuario
+                                </label>
+                                <input type="text" class="form-control form-control-lg" id="username" 
+                                       name="username" required autofocus>
+                            </div>
+                            
+                            <!-- Campo Contraseña -->
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-bold fs-5 mb-3">
+                                    <i class="bi bi-lock-fill me-2"></i>Contraseña
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-lg" id="password" 
+                                           name="password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Recordar sesión -->
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label" for="remember">Mantener sesión iniciada</label>
+                            </div>
+                            
+                            <!-- Botón de submit -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg py-3">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Ingresar
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Enlaces adicionales -->
+                        <div class="mt-4 text-center">
+                            <p class="mb-2">¿No tienes cuenta? 
+                                <a href="{% url 'inicio:registro' %}" class="fw-bold">Regístrate aquí</a>
+                            </p>
+                            <p class="mb-0">
+                                <a href="{% url 'inicio:password_reset' %}" class="text-decoration-none">
+                                    <i class="bi bi-question-circle"></i> ¿Olvidaste tu contraseña?
+                                </a>
+                            </p>
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Ingresar</button>
-                        </div>
-                    </form>
-                    <div class="mt-3 text-center">
-                        <p class="mb-1">¿No tienes una cuenta? <a href="{% url 'inicio:registro' %}">Regístrate</a></p>
-                        <p><a href="#">¿Olvidaste tu contraseña?</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
+
+<!-- Script para mostrar/ocultar contraseña -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    
+    togglePassword.addEventListener('click', function() {
+        // Cambiar el tipo de input
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        
+        // Cambiar el icono
+        this.querySelector('i').classList.toggle('bi-eye-fill');
+        this.querySelector('i').classList.toggle('bi-eye-slash-fill');
+    });
+    
+    // Enfocar automáticamente el campo de usuario
+    document.getElementById('username').focus();
+});
+</script>
+
+<style>
+    .form-control-lg {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+    .input-group-text {
+        cursor: pointer;
+    }
+    .text-gradient {
+        background: linear-gradient(to right, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
 {% endblock %}

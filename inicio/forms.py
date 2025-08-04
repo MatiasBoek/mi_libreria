@@ -1,5 +1,6 @@
 from django import forms
 from .models import Autor, Editorial, Libro, Resena
+
 class AutorForm(forms.ModelForm):
     class Meta:
         model = Autor
@@ -38,17 +39,25 @@ class AutorForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # Extrae el request primero
         super().__init__(*args, **kwargs)
+        
         # Añade clases Bootstrap y placeholders
         for field_name, field in self.fields.items():
             if 'class' not in field.widget.attrs:
                 field.widget.attrs['class'] = 'form-control'
-            if field_name != 'fecha_nacimiento' and not field.widget.attrs.get('placeholder'):
-                field.widget.attrs['placeholder'] = f'Ingrese {field.label.lower()}...'
+            if field_name not in ['fecha_nacimiento', 'fecha_fallecimiento'] and not field.widget.attrs.get('placeholder'):
+                field.widget.attrs['placeholder'] = f'Ingrese {self.fields[field_name].label.lower()}...'
             
             # Mejora para campos booleanos si los tienes
             if isinstance(field.widget, forms.CheckboxInput):
-                field.widget.attrs['class'] = 'form-check-input'   
+                field.widget.attrs['class'] = 'form-check-input'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.request and not self.request.user.is_authenticated:
+            raise forms.ValidationError("Debes estar autenticado para realizar esta acción")
+        return cleaned_data 
 
 class EditorialForm(forms.ModelForm):
     class Meta:

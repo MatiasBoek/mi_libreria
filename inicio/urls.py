@@ -36,13 +36,37 @@ urlpatterns = [
     path('resenas/<int:pk>/', views.detalle_resena, name='detalle_resena'),
     path('mis-resenas/', views.mis_resenas, name='mis_resenas'),
     
-     # Autenticación
     path('registro/', views.registro, name='registro'),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('logout-exito/', views.logout_exito_view, name='logout_exito'),
     path('perfil/', views.perfil_usuario, name='perfil'),
     
-    path('pages/<int:pk>/', views.detalle_pagina, name='detalle_pagina'),
-    path('pages/', views.listar_paginas, name='listar_paginas'),
+    # Password reset URLs
+    path('recuperar-contrasena/', auth_views.PasswordResetView.as_view(
+        template_name='inicio/password_reset.html',
+        email_template_name='inicio/password_reset_email.html',
+        subject_template_name='inicio/password_reset_subject.txt',
+        success_url='/login/'
+    ), name='password_reset'),
     
+    path('recuperar-contrasena/enviado/', auth_views.PasswordResetDoneView.as_view(
+        template_name='inicio/password_reset_done.html'
+    ), name='password_reset_done'),
+    
+    path('restablecer/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='inicio/password_reset_confirm.html',
+        success_url='/recuperar-contrasena/completado/'
+    ), name='password_reset_confirm'),
+    
+    path('recuperar-contrasena/completado/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='inicio/password_reset_complete.html'
+    ), name='password_reset_complete'),
+        
+    path('pages/', views.listar_paginas, name='listar_paginas'),
+    path('pages/<int:pk>/', views.detalle_pagina, name='detalle_pagina'),
+    
+    path('terminos-condiciones/', views.terminos_condiciones, name='terminos_condiciones'),
+    
+    path('politica-privacidad/', views.politica_privacidad, name='politica_privacidad'),
 ]

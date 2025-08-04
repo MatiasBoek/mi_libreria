@@ -1,0 +1,22 @@
+{% if breadcrumbs %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'inicio:inicio' %}" class="text-decoration-none">
+                <i class="bi bi-house-door"></i> Inicio
+            </a>
+        </li>
+        {% for crumb in breadcrumbs %}
+        <li class="breadcrumb-item {% if forloop.last %}active{% endif %}">
+            {% if not forloop.last %}
+                <a href="{{ crumb.url }}" class="text-decoration-none">
+                    {{ crumb.name }}
+                </a>
+            {% else %}
+                {{ crumb.name }}
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}

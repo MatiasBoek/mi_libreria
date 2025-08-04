@@ -35,6 +35,7 @@ class Autor(models.Model):
         blank=True, 
         verbose_name="Foto del autor"
     )
+    
     premios = models.CharField(
         max_length=255, 
         blank=True, 
@@ -183,6 +184,7 @@ class Page(models.Model):
     titulo = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     contenido = models.TextField()
+    excerpt = models.CharField(max_length=300)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 

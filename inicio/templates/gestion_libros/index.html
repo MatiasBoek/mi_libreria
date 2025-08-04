@@ -10,7 +10,7 @@
         <div class="row gx-5 align-items-center">
             <div class="col-xxl-5">
                 <!-- Header text content-->
-                <div class="text-center text-xxl-start">
+                <div class="text-center text-xxl-start pe-xxl-5">
                     <div class="badge bg-gradient-primary-to-secondary text-white mb-4">
                         <div class="text-uppercase">Libros &middot; Autores &middot; Editoriales</div>
                     </div>
@@ -23,48 +23,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xxl-7">
-                <!-- Header profile picture-->
-                <div class="d-flex justify-content-center mt-5 mt-xxl-0">
-                    <div class="profile bg-gradient-primary-to-secondary">
-                        <img class="profile-img" src="{% static 'assets/imagen_libros.png' %}" alt="Libros Book Flow">
-                        
-                        <!-- SVG Dots (completo) -->
-                        <div class="dots-1">
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 191.6 1215.4" style="enable-background: new 0 0 191.6 1215.4" xml:space="preserve">
-                                <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)">
-                                    <path d="M227.7,12788.6c-105-35-200-141-222-248c-43-206,163-412,369-369c155,32,275,190,260,339c-11,105-90,213-190,262 C383.7,12801.6,289.7,12808.6,227.7,12788.6z"></path>
-                                    <!-- Todos tus paths SVG aquí (los 4 bloques completos) -->
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="dots-2">
-                            <!-- Repetir SVG para dots-2 -->
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 191.6 1215.4">
-                                <!-- Contenido SVG -->
-                            </svg>
-                        </div>
-                        <div class="dots-3">
-                            <!-- Repetir SVG para dots-3 -->
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 191.6 1215.4">
-                                <!-- Contenido SVG -->
-                            </svg>
-                        </div>
-                        <div class="dots-4">
-                            <!-- Repetir SVG para dots-4 -->
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 191.6 1215.4">
-                                <!-- Contenido SVG -->
-                            </svg>
-                        </div>
-                    </div>
+           <div class="col-xxl-7">
+                <div class="d-flex justify-content-center mt-5 mt-xxl-0 position-relative">
+                    <!-- Fondo mejorado con gradiente sutil -->
+                    <div class="position-absolute" 
+                        style="width: 85%; height: 85%; top: 7.5%; left: 7.5%; 
+                                background: linear-gradient(45deg, 
+                                    rgba(59, 130, 246, 0.05), 
+                                    rgba(139, 92, 246, 0.05)); 
+                                z-index: -1; border-radius: 1rem;
+                                box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+                                transition: all 0.4s ease;"></div>
+                    
+                    <!-- Imagen con efectos -->
+                    <img class="img-fluid rounded" 
+                        src="{% static 'assets/imagen_libros.png' %}" 
+                        alt="Libros Book Flow"
+                        style="max-height: 480px;
+                                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+                                border: 1px solid rgba(59, 130, 246, 0.15);
+                                cursor: pointer;"
+                        onmouseover="this.style.transform='scale(1.03)'; this.style.boxShadow='0 12px 28px rgba(59, 130, 246, 0.15)'"
+                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- About Section (opcional) -->
-<section class="bg-light py-5">
+<!-- About Section -->
+<section class="bg-light py-5 mt-4">  <!-- Añadido mt-4 para separación -->
     <div class="container px-5">
         <div class="row gx-5 justify-content-center">
             <div class="col-xxl-8">

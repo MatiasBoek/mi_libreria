@@ -127,4 +127,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'inicio:login'
 LOGIN_REDIRECT_URL = 'inicio:inicio'
-LOGOUT_REDIRECT_URL = 'inicio:inicio'
+LOGOUT_REDIRECT_URL = 'inicio:logout_exito'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
+EMAIL_HOST = 'smtp.tuservidor.com'  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tu@email.com'
+EMAIL_HOST_PASSWORD = 'tupassword'
+DEFAULT_FROM_EMAIL = 'no-reply@bookflow.com'
+
+# settings.py
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

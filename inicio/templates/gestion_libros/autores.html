@@ -4,26 +4,9 @@
 {% block title %}Autores | Book Flow{% endblock %}
 
 {% block content %}
-<html lang="es">
-   <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Catálogo de libros - Book Flow" />
-        <meta name="author" content="" />
-        <title>Book Flow - Catálogo de Libros</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
-        <!-- Custom Google font-->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-        <!-- Bootstrap icons-->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-    </head>
-    <main class="flex-shrink-0">
-    <!-- Page Content-->
+{% include 'breadcrumbs.html' %}
+
+<body class="flex-shrink-0">
     <div class="container px-5 my-5">
         <div class="text-center mb-5">
             <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Nuestros Autores</span></h1>
@@ -41,7 +24,7 @@
         </div>
         
         <div class="row gx-5 justify-content-center">
-            <div class="col-lg-11 col-xl-9 col-xxl-8">
+            <div class="col-12">
                 <!-- Authors Section-->
                 <section>
                     <div class="d-flex align-items-center justify-content-between mb-4">
@@ -52,47 +35,66 @@
                         </a>
                     </div>
                     
-                    <!-- Author Cards (Dynamic from Django) -->
+                    <!-- Author Cards -->
                     {% for autor in autores %}
                     <div class="card shadow border-0 rounded-4 mb-5">
                         <div class="card-body p-5">
-                            <div class="row align-items-center gx-5">
+                            <div class="row align-items-center gx-5">                        
                                 <div class="col-md-3 text-center mb-4 mb-md-0">
-                                    <div class="bg-light p-4 rounded-4">
+                                    <div class="bg-light p-4 rounded-4 h-100 d-flex flex-column justify-content-center">
                                         {% if autor.foto %}
                                             <img src="{{ autor.foto.url }}" alt="Foto de {{ autor.nombre }}" 
-                                                 class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                                class="img-fluid rounded-circle shadow-sm mx-auto" 
+                                                style="width: 150px; height: 150px; object-fit: cover;"
+                                                onerror="this.onerror=null;this.src='{% static 'assets/default-author.png' %}'">
                                         {% else %}
                                             <img src="{% static 'assets/default-author.png' %}" alt="Foto no disponible" 
-                                                 class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                                class="img-fluid rounded-circle shadow-sm mx-auto" 
+                                                style="width: 150px; height: 150px; object-fit: cover;">
                                         {% endif %}
                                     </div>
                                 </div>
+                                
                                 <div class="col-md-9">
-                                    <h3 class="fw-bolder">{{ autor.nombre }}</h3>
-                                    <p class="text-muted mb-2">
-                                        <i class="bi bi-geo-alt"></i> {{ autor.nacionalidad }}
-                                    </p>
-                                    <div class="d-flex flex-wrap gap-2 mb-3">
-                                        <span class="badge bg-primary">{{ autor.get_edad }} años</span>
-                                        <span class="badge bg-secondary">{{ autor.libro_set.count }} libros</span>
-                                        {% if autor.premios %}
-                                        <span class="badge bg-success">{{ autor.premios }}</span>
-                                        {% endif %}
+                                    <h3 class="fw-bolder">{{ autor.nombre }} {{ autor.apellido }}</h3>
+                                    
+                                    {% if autor.premios %}
+                                    <div class="mb-3 p-3 bg-light rounded-3">
+                                        <h5 class="fw-bold mb-2"><i class="bi bi-trophy-fill text-warning me-2"></i>Premios y Reconocimientos</h5>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% for premio in autor.premios.splitlines %}
+                                                {% if premio.strip %}
+                                                <span class="badge bg-warning text-dark">{{ premio.strip }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
                                     </div>
-                                    <p>{{ autor.biografia|truncatewords:30 }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <span class="fw-bold">Nacimiento: </span>{{ autor.fecha_nacimiento|date:"d/m/Y" }}
-                                            {% if autor.fecha_fallecimiento %}
-                                            <span class="mx-2">|</span>
-                                            <span class="fw-bold">Fallecimiento: </span>{{ autor.fecha_fallecimiento|date:"d/m/Y" }}
+                                    {% endif %}
+                                    
+                                    <div class="biografia-contenedor mb-3">
+                                        <div class="biografia-corta">
+                                            {{ autor.biografia|truncatewords:30 }}
+                                            {% if autor.biografia|wordcount > 30 %}
+                                            <button class="btn btn-link p-0 leer-mas-btn" data-bs-toggle="collapse" data-bs-target="#biografia-{{ autor.id }}">Leer más</button>
                                             {% endif %}
                                         </div>
-                                        <div>
-                                            <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-sm btn-outline-primary">Detalles</a>
-                                            <a href="{% url 'inicio:editar_autor' autor.pk %}" class="btn btn-sm btn-primary ms-2">Editar</a>
+                                        <div class="biografia-completa collapse" id="biografia-{{ autor.id }}">
+                                            {{ autor.biografia }}
+                                            <button class="btn btn-link p-0 leer-mas-btn" data-bs-toggle="collapse" data-bs-target="#biografia-{{ autor.id }}">Mostrar menos</button>
                                         </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <span class="fw-bold">Nacimiento: </span>{{ autor.fecha_nacimiento|date:"d/m/Y" }}
+                                        {% if autor.fecha_fallecimiento %}
+                                        <span class="mx-2">|</span>
+                                        <span class="fw-bold">Fallecimiento: </span>{{ autor.fecha_fallecimiento|date:"d/m/Y" }}
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div>
+                                        <a href="{% url 'inicio:detalle_autor' autor.pk %}" class="btn btn-sm btn-outline-primary">Detalles</a>
+                                        <a href="{% url 'inicio:editar_autor' autor.pk %}" class="btn btn-sm btn-primary ms-2">Editar</a>
                                     </div>
                                 </div>
                             </div>
@@ -142,5 +144,47 @@
             </div>
         </div>
     </div>
-</main>
+<style>
+      .biografia-contenedor {
+        position: relative;
+    }
+    
+    .leer-mas-btn {
+        cursor: pointer;
+        color: #0d6efd;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    
+    .leer-mas-btn:hover {
+        text-decoration: none;
+    }
+    
+    .biografia-completa {
+        padding-top: 10px;
+    }
+</style>
+</body>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.getAttribute('data-bs-target');
+            const isCollapsed = document.querySelector(target).classList.contains('show');
+            
+            if (this.textContent === 'Leer más' && isCollapsed) {
+                this.textContent = 'Mostrar menos';
+            } else if (this.textContent === 'Mostrar menos' && !isCollapsed) {
+                this.textContent = 'Leer más';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

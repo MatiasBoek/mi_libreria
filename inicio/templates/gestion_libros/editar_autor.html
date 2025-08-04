@@ -2,94 +2,149 @@
 {% load static %}
 
 {% block content %}
-<!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
-            <div class="container px-5">
-                <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
-                    <span class="fw-bolder text-primary">Book Flow</span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
-                    </ul>
-                </div>
-            </div>
-        </nav>
+{% include 'breadcrumbs.html' %}
+
 <div class="container px-5 my-5">
-    <div class="row gx-5 justify-content-center">
-        <div class="col-lg-8 col-xl-6">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bolder mb-0">
-                    <span class="text-gradient d-inline">{{ titulo }}</span>
-                </h2>
-                <p class="lead fw-normal text-muted mb-0">
-                    Editando: {{ autor.nombre }} {{ autor.apellido }}
-                </p>
+    {% if not user.is_authenticated %}
+        <!-- Mensaje para usuarios no autenticados -->
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8">
+                <div class="alert alert-danger mt-4">
+                    <h4 class="alert-heading">Acceso no autorizado</h4>
+                    <p>Debes <a href="{% url 'inicio:login' %}?next={{ request.path }}" class="alert-link">iniciar sesión</a> para editar autores.</p>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="row gx-5 justify-content-center">
-        <div class="col-lg-8">
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% else %}
+        <!-- Contenido para usuarios autenticados -->
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="text-center mb-5">
+                    <h2 class="display-5 fw-bolder mb-0">
+                        <span class="text-gradient d-inline">{{ titulo }}</span>
+                    </h2>
+                    <p class="lead fw-normal text-muted mb-0">
+                        Editando: {{ autor.nombre }} {{ autor.apellido }}
+                    </p>
                 </div>
-                {% endfor %}
-            {% endif %}
+            </div>
+        </div>
 
-            <div class="card shadow border-0 rounded-4">
-                <div class="card-body p-5">
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        
-                        {% for field in form %}
-                        <div class="mb-4">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">
-                                {{ field.label }}
-                                {% if field.field.required %}
-                                <span class="text-danger">*</span>
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8">
+                <!-- Mensajes del sistema -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Tarjeta del formulario -->
+                <div class="card shadow border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <form method="post" enctype="multipart/form-data" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Sección de foto del autor -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Foto actual</label>
+                                <div class="text-center mb-3">
+                                    {% if autor.foto %}
+                                        <img src="{{ autor.foto.url }}" 
+                                             alt="Foto actual de {{ autor.nombre }}" 
+                                             class="img-thumbnail" 
+                                             style="max-width: 200px; max-height: 200px;">
+                                        <p class="small text-muted mt-2">Foto actual</p>
+                                    {% else %}
+                                        <img src="{% static 'assets/default-author.png' %}" 
+                                             alt="Sin foto" 
+                                             class="img-thumbnail" 
+                                             style="max-width: 200px; max-height: 200px;">
+                                    {% endif %}
+                                </div>
+                                
+                                <label for="id_foto" class="form-label fw-bold">
+                                    Cambiar foto
+                                </label>
+                                <input type="file" name="foto" class="form-control" id="id_foto" accept="image/*">
+                                
+                                {% if form.foto.help_text %}
+                                <small class="form-text text-muted">{{ form.foto.help_text }}</small>
                                 {% endif %}
-                            </label>
-                            {{ field }}
-                            {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% if field.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ field.errors|striptags }}
+                                {% if form.foto.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.foto.errors|striptags }}
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
+                            
+                            <!-- Resto de campos del formulario -->
+                            {% for field in form %}
+                                {% if field.name != 'foto' %}
+                                <div class="mb-3">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                        {{ field.label }}
+                                        {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                        {% endif %}
+                                    </label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
 
-                        <div class="d-flex justify-content-between mt-5">
-                            <a href="{% url 'inicio:listar_autores' %}" class="btn btn-outline-secondary px-4">
-                                <i class="bi bi-arrow-left me-2"></i>Cancelar
-                            </a>
-                            <div>
-                                <a href="{% url 'inicio:agregar_autor' %}" class="btn btn-outline-primary me-2">
-                                    <i class="bi bi-plus-circle me-2"></i>Nuevo Autor
+                            <!-- Botones de acción -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{% url 'inicio:listar_autores' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Cancelar
                                 </a>
-                                <button type="submit" class="btn btn-primary px-4">
-                                    <i class="bi bi-save me-2"></i>Guardar Cambios
-                                </button>
+                                <div>
+                                    <a href="{% url 'inicio:agregar_autor' %}" class="btn btn-outline-primary me-2">
+                                        <i class="bi bi-plus-circle me-1"></i> Nuevo Autor
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i> Guardar cambios
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
+
+<!-- Script para vista previa de la nueva imagen -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('id_foto');
+    const imagePreview = document.querySelector('.img-thumbnail');
+    
+    if (fileInput && imagePreview) {
+        fileInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+    }
+});
+</script>
+
 {% endblock %}

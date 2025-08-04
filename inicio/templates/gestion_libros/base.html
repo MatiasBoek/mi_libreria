@@ -3,50 +3,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Book Flow - Plataforma de libros, autores y editoriales">
-    <title>{% block title %}Book Flow{% endblock %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Catálogo de libros - Book Flow" />
+    <meta name="author" content="" />
+    <title>{% block title %}Book Flow - Catálogo de Libros{% endblock %}</title>
     
-    <!-- Bootstrap CSS -->
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+    
+    <!-- Custom Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Google Fonts (Plus Jakarta Sans) -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet" />
     
-    <!-- Bloque para CSS personalizado -->
-    {% block extra_css %}
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-    {% endblock %}
+    <!-- Core theme CSS -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .text-gradient {
-            background: linear-gradient(to right, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .profile-img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 1rem;
-        }
-    </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column h-100">
-    <!-- Navbar (versión moderna de index.html) -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
         <div class="container px-5">
             <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
@@ -64,8 +45,8 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
                 </ul>
                 
-                <!-- Menú de usuario (heredado de tu base.html original) -->
-                <ul class="navbar-nav mb-2 mb-lg-0 user-menu">
+                <!-- Menú de usuario -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
@@ -97,42 +78,51 @@
         </div>
     </nav>
 
-    <!-- Contenido principal -->
+   <!-- Contenido principal -->
     <main class="flex-shrink-0">
-        <div class="container mt-2 mb-5">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            
+        <!-- Mensajes arriba del contenido pero dentro del main -->
+        {% if messages %}
+        <div class="container px-5 mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="container px-5 my-5">
             {% block content %}{% endblock %}
         </div>
     </main>
 
-    <!-- Footer (estilo moderno) -->
+    <!-- Footer -->
     <footer class="bg-white py-4 mt-auto">
         <div class="container px-5">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
+            <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                <div class="col-auto">
                     <div class="small m-0">Copyright &copy; Book Flow {% now "Y" %}</div>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="#" class="text-decoration-none me-3">Términos</a>
-                    <a href="#" class="text-decoration-none me-3">Privacidad</a>
-                    <a href="{% url 'inicio:contacto' %}" class="text-decoration-none">Contacto</a>
+                <div class="col-auto">
+                    <a class="small" href="{% url 'inicio:politica_privacidad' %}">Privacidad</a>
+                    <span class="mx-1">&middot;</span>
+                    <a class="small" href="{% url 'inicio:terminos_condiciones' %}">Términos</a>
+                    <span class="mx-1">&middot;</span>
+                    <a class="small" href="{% url 'inicio:contacto' %}">Contacto</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
     
     <!-- Bloque para JS personalizado -->
     {% block extra_js %}{% endblock %}
+
+   
+
 </body>
 </html>
