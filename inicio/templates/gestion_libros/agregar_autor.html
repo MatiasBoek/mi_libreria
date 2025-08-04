@@ -1,6 +1,12 @@
 {% extends "gestion_libros/base.html" %}
 {% load static %}
 
+{% block title %} Agregar Autor | Book Flow{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 {% include 'breadcrumbs.html' %}
 
@@ -36,12 +42,19 @@
                                     {% csrf_token %}
                                     
                                     <!-- Campos del formulario -->
-                                    <div class="mb-3">
-                                        <label for="{{ form.nombre_completo.id_for_label }}" class="form-label fw-bold">Nombre Completo</label>
-                                        {{ form.nombre_completo }}
-                                        {% if form.nombre_completo.errors %}
-                                            <div class="text-danger">{{ form.nombre_completo.errors }}</div>
-                                        {% endif %}
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_nombre" class="form-label fw-bold">Nombre</label>
+                                            <input type="text" name="nombre" class="form-control form-control-lg" 
+                                                id="id_nombre" placeholder="Ej: Mario" required
+                                                style="width: 100%; padding: 12px;">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="id_apellido" class="form-label fw-bold">Apellido</label>
+                                            <input type="text" name="apellido" class="form-control form-control-lg" 
+                                                id="id_apellido" placeholder="Ej: Vargas Llosa" required
+                                                style="width: 100%; padding: 12px;">
+                                        </div>
                                     </div>
                                     
                                     <div class="row">

@@ -1,0 +1,164 @@
+{% extends "gestion_libros/base.html" %}
+{% load static %}
+
+{% block title %}{{ editorial.nombre }} | Book Flow{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/editoriales.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% include 'breadcrumbs.html' %}
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar permanentemente la editorial <strong>{{ editorial.nombre }}</strong>?</p>
+                {% if editorial.libro_set.exists %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Esta editorial tiene {{ editorial.libro_set.count }} libro(s) asociado(s). 
+                    Al eliminarla, estos libros quedarán sin editorial asignada.
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="eliminarForm" method="post" action="{% url 'inicio:eliminar_editorial' editorial.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i> Confirmar Eliminación
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="d-flex flex-column h-100 bg-light">
+    <!-- Page Content-->
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0">
+                <span class="text-gradient d-inline">{{ editorial.nombre }}</span>
+            </h1>
+            <p class="lead fw-normal text-muted mb-0">Detalles completos de la editorial</p>
+        </div>
+        
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                    <div class="card-body p-5">
+                        <div class="row gx-4">
+                            <!-- Columna izquierda (logo e info básica) -->
+                            <div class="col-md-5">
+                                <div class="mb-4 text-center">
+                                    {% if editorial.logo %}
+                                    <img src="{{ editorial.logo.url }}" 
+                                         alt="Logo de {{ editorial.nombre }}"
+                                         class="img-fluid rounded-3 mb-4"
+                                         style="max-height: 250px;">
+                                    {% else %}
+                                    <div class="bg-light rounded-3 p-5 mb-4">
+                                        <i class="bi bi-building" style="font-size: 5rem; color: #6c757d;"></i>
+                                        <p class="mt-2 text-muted">No hay logo disponible</p>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="text-start">
+                                        <h3 class="h4 mb-3">{{ editorial.nombre }}</h3>
+                                        
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-geo-alt me-2 text-primary"></i>
+                                            <span>{{ editorial.pais }}</span>
+                                        </div>
+                                        
+                                        {% if editorial.fundacion %}
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-calendar-event me-2 text-primary"></i>
+                                            <span>Fundada en {{ editorial.fundacion }}</span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if editorial.sitio_web %}
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="bi bi-globe me-2 text-primary"></i>
+                                            <a href="{{ editorial.sitio_web }}" target="_blank" class="text-decoration-none">
+                                                Sitio web oficial
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Columna derecha (descripción) -->
+                            <div class="col-md-7">
+                                <div class="mb-4">
+                                    <h3 class="h4 mb-3 text-gradient d-inline">Sobre la editorial</h3>
+                                    
+                                    {% if editorial.descripcion %}
+                                    <div class="card bg-light border-0 p-4">
+                                        {{ editorial.descripcion|linebreaks }}
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-info">
+                                        No hay descripción disponible para esta editorial.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Sección de libros (opcional) -->
+                                <div class="mb-4">
+                                    <h3 class="h4 mb-3 text-gradient d-inline">Libros publicados</h3>
+                                    {% if editorial.libro_set.all %}
+                                    <div class="list-group">
+                                        {% for libro in editorial.libro_set.all|slice:":5" %}
+                                        <a href="{% url 'inicio:detalle_libro' libro.id %}" 
+                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                            {{ libro.titulo }}
+                                            <span class="badge bg-primary rounded-pill">{{ libro.año_publicacion }}</span>
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% if editorial.libro_set.count > 5 %}
+                                    <div class="text-end mt-2">
+                                        <a href="#" class="text-decoration-none">Ver todos los libros ({{ editorial.libro_set.count }})</a>
+                                    </div>
+                                    {% endif %}
+                                    {% else %}
+                                    <div class="alert alert-warning">
+                                        No hay libros registrados para esta editorial.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                            <a href="{% url 'inicio:listar_editoriales' %}" class="btn btn-lg btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left me-2"></i> Volver
+                            </a>
+                            <div>
+                                <a href="{% url 'inicio:editar_editorial' editorial.id %}" class="btn btn-lg btn-outline-primary px-4 me-2">
+                                    <i class="bi bi-pencil me-2"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-lg btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">
+                                    <i class="bi bi-trash me-2"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "gestion_libros/base.html" %}
+{% load static %}
+
+{% block title %}Editar {{ editorial.nombre }} | Book Flow{% endblock %}
+
+{% block content %}
+{% include 'breadcrumbs.html' %}
+
+{% block extra_css %}
+<link href="{% static 'css/editoriales.css' %}" rel="stylesheet">
+{% endblock %}
+
+<main class="d-flex flex-column h-100 bg-light">
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bolder mb-0">
+                <span class="text-gradient d-inline">Editar Editorial</span>
+            </h1>
+            <p class="lead fw-normal text-muted mb-0">Modifique los datos de {{ editorial.nombre }}</p>
+        </div>
+        
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                    <div class="card-body p-5">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="row gx-4">
+                                <!-- Columna Izquierda -->
+                                <div class="col-md-6">
+                                    <!-- Nombre -->
+                                    <div class="mb-4">
+                                        <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold">
+                                            Nombre <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.nombre }}
+                                        {% if form.nombre.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.nombre.errors|join:", " }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- País -->
+                                    <div class="mb-4">
+                                        <label for="{{ form.pais.id_for_label }}" class="form-label fw-bold">
+                                            País
+                                        </label>
+                                        {{ form.pais }}
+                                        {% if form.pais.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.pais.errors|join:", " }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Año Fundación -->
+                                    <div class="mb-4">
+                                        <label for="{{ form.fundacion.id_for_label }}" class="form-label fw-bold">
+                                            Año de Fundación
+                                        </label>
+                                        {{ form.fundacion }}
+                                        <div class="form-text">Ingrese un año válido (ej: 1985)</div>
+                                        {% if form.fundacion.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.fundacion.errors|join:", " }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Columna Derecha -->
+                                <div class="col-md-6">
+                                    <!-- Sitio Web -->
+                                    <div class="mb-4">
+                                        <label for="{{ form.sitio_web.id_for_label }}" class="form-label fw-bold">
+                                            Sitio Web
+                                        </label>
+                                        {{ form.sitio_web }}
+                                        {% if form.sitio_web.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.sitio_web.errors|join:", " }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Logo (solo admin) -->
+                                    <div class="mb-4">
+                                        <label for="{{ form.logo.id_for_label }}" class="form-label fw-bold">
+                                            Logo
+                                        </label>
+                                        {{ form.logo }}
+                                        {% if form.logo.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.logo.errors|join:", " }}
+                                        </div>
+                                        {% endif %}
+                                        {% if not is_admin and editorial.logo %}
+                                        <div class="alert alert-info mt-2">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            El logo actual no puede ser modificado. Contacte al administrador.
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
+                                    Descripción
+                                </label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.descripcion.errors|join:", " }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                                <a href="{% url 'inicio:detalle_editorial' editorial.pk %}" class="btn btn-lg btn-outline-secondary px-4">
+                                    <i class="bi bi-x-circle me-2"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-lg btn-primary px-4">
+                                    <i class="bi bi-save me-2"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+// Validación del año al enviar el formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    const yearInput = document.getElementById('{{ form.fundacion.id_for_label }}');
+    const currentYear = new Date().getFullYear();
+    
+    if (yearInput.value && (yearInput.value < 1000 || yearInput.value > currentYear)) {
+        e.preventDefault();
+        yearInput.classList.add('is-invalid');
+        alert('Por favor ingrese un año válido entre 1000 y ' + currentYear);
+    }
+});
+</script>
+{% endblock %}

@@ -11843,24 +11843,162 @@ a, button, .nav-link, .dropdown-item {
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
 }
 
-.biografia-contenedor {
-    position: relative;
+/* ========== ESTILOS PARA EDITORIALES ========== */
+/* Efecto de gradiente para textos */
+.text-gradient {
+    background: linear-gradient(to right, #3b82f6, #6366f1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
+/* Efecto hover para tarjetas */
+.card {
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Estilos mejorados para botones de peligro */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+    transform: translateY(-1px);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+/* Para formularios de editoriales */
+.editorial-form .form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.editorial-form .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Para el placeholder del logo */
+.logo-placeholder {
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    border-radius: 0.5rem;
+}
+
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+    }
     
-.biografia-completa {
-    display: none;
-}
+    textarea.form-control {
+        min-height: 150px;
+    }
     
-.biografia-completa.visible {
-    display: block;
-}
+    .text-gradient {
+        background: linear-gradient(to right, #3b82f6, #6366f1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
     
-.leer-mas-btn {
-       cursor: pointer;
-      color: #0d6efd;
-      text-decoration: underline;
-}
+    /* Estilo para campos deshabilitados */
+    input:disabled, select:disabled, textarea:disabled {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+        .text-gradient {
+        background: linear-gradient(to right, #3b82f6, #6366f1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
     
-.leer-mas-btn:hover {
-   text-decoration: none;
-}
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .list-group-item {
+        transition: all 0.2s;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+
+        /* Asegurar espacio suficiente en campos */
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        min-height: 45px;
+    }
+    
+    /* Espacio extra para campos importantes */
+    #id_isbn, #id_precio {
+        padding-right: 2rem;
+    }
+    
+    /* Textarea más grande */
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+    
+    /* Mejor separación entre campos en línea */
+    .row.gx-3 > [class^="col-"] {
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+    
+    /* Validaciones */
+    .invalid-feedback {
+        font-size: 0.85rem;
+    }
+    
+    /* Input group ajustado */
+    .input-group-text {
+        min-width: 40px;
+        justify-content: center;
+    }
+
+          .biografia-contenedor {
+        position: relative;
+    }
+    
+    .leer-mas-btn {
+        cursor: pointer;
+        color: #0d6efd;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    
+    .leer-mas-btn:hover {
+        text-decoration: none;
+    }
+    
+    .biografia-completa {
+        padding-top: 10px;
+    }

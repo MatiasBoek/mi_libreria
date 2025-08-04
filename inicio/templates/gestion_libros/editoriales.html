@@ -27,26 +27,64 @@
                 {% for editorial in editoriales %}
                 <div class="col-lg-4 mb-5">
                     <div class="card h-100 shadow border-0">
+                        <!-- Imagen del logo -->
+                        {% if editorial.logo %}
+                        <img class="card-img-top p-3" src="{{ editorial.logo.url }}" alt="Logo de {{ editorial.nombre }}" 
+                             style="height: 180px; object-fit: contain; background: #f8f9fa;">
+                        {% else %}
+                        <div class="text-center p-4" style="height: 180px; background: #f8f9fa;">
+                            <i class="bi bi-building" style="font-size: 5rem; color: #6c757d;"></i>
+                        </div>
+                        {% endif %}
+                        
                         <div class="card-body p-4">
                             <div class="badge bg-primary bg-gradient rounded-pill mb-2">Editorial</div>
                             <h5 class="card-title mb-3">{{ editorial.nombre }}</h5>
+                            
+                            <!-- Descripción con "leer más" -->
+                            {% if editorial.descripcion %}
+                            <div class="card-text mb-3">
+                                <div class="editorial-descripcion">
+                                    {{ editorial.descripcion|truncatechars:100 }}
+                                </div>
+                                {% if editorial.descripcion|length > 100 %}
+                                <a href="#" class="text-decoration-none leer-mas" 
+                                   data-fulltext="{{ editorial.descripcion }}">Leer más</a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Información adicional -->
                             {% if editorial.pais %}
-                            <p class="card-text text-muted mb-0">
+                            <p class="card-text text-muted mb-1">
                                 <i class="bi bi-globe me-1"></i> {{ editorial.pais }}
                             </p>
                             {% endif %}
+                            
                             {% if editorial.sitio_web %}
-                            <p class="card-text text-muted">
+                            <p class="card-text text-muted mb-1">
                                 <i class="bi bi-link-45deg me-1"></i> 
-                                <a href="{{ editorial.sitio_web }}" target="_blank">Sitio web</a>
+                                <a href="{{ editorial.sitio_web }}" target="_blank" class="text-decoration-none">
+                                    Sitio web
+                                </a>
                             </p>
                             {% endif %}
+                            
+                            <!-- Botón para ver detalles -->
+                            <div class="mt-3">
+                                <a href="{% url 'inicio:detalle_editorial' editorial.id %}" class="btn btn-outline-primary btn-sm"> Ver detalles </a>
+                            </div>
                         </div>
+                        
                         <div class="card-footer bg-transparent border-top-0">
                             <div class="d-flex align-items-end justify-content-between">
-                                <div class="d-flex align-items-center">
-                                    <div class="small">
-                                        <div class="text-muted">Fundada en {{ editorial.fundacion|date:"Y" }}</div>
+                                <div class="small">
+                                    <div class="text-muted">
+                                        {% if editorial.fundacion %}
+                                        Fundada en {{ editorial.fundacion|date:"Y" }}
+                                        {% else %}
+                                        Año de fundación no especificado
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -64,4 +102,64 @@
         </div>
     </section>
 </main>
+
+<!-- Modal para mostrar la descripción completa -->
+<div class="modal fade" id="descripcionModal" tabindex="-1" aria-labelledby="descripcionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="descripcionModalLabel">Descripción Completa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDescripcionContent">
+                <!-- Contenido se llenará con JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .editorial-descripcion {
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .leer-mas {
+        color: #0d6efd;
+        font-size: 0.875rem;
+    }
+    
+    .leer-mas:hover {
+        text-decoration: underline !important;
+    }
+    
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para "Leer más"
+    document.querySelectorAll('.leer-mas').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            e.preventDefault();
+            const fullText = this.getAttribute('data-fulltext');
+            document.getElementById('modalDescripcionContent').textContent = fullText;
+            
+            // Mostrar el modal
+            var myModal = new bootstrap.Modal(document.getElementById('descripcionModal'));
+            myModal.show();
+        });
+    });
+});
+</script>
 {% endblock %}

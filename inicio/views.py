@@ -3,11 +3,12 @@ from .models import Autor, Editorial, Libro, Resena, Page
 from .forms import AutorForm, EditorialForm, LibroForm, BusquedaForm, ResenaForm
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
+
 
 # INDEX/INICIO
 
@@ -16,16 +17,34 @@ def inicio(request):
 
 # LIBRO
 
+@login_required
 def agregar_libro(request):
+    breadcrumbs = [
+        {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+        {'name': 'Agregar Libro', 'url': 'inicio:agregar_libro'}  
+    ]
+    
+    autores = Autor.objects.all().order_by('apellido', 'nombre')
+    editoriales = Editorial.objects.all().order_by('nombre')
+    
     if request.method == 'POST':
-        form = LibroForm(request.POST)
+        form = LibroForm(request.POST, request.FILES)  
         if form.is_valid():
-            form.save()
-            return redirect('inicio:listar_libros') 
+            libro = form.save()
+            messages.success(request, f'Libro "{libro.titulo}" agregado correctamente')
+            return redirect('inicio:listar_libros')
     else:
         form = LibroForm()
     
-    return render(request, 'gestion_libros/agregar_libro.html', {'form': form})
+    context = {
+        'form': form,
+        'autores': autores,
+        'editoriales': editoriales,
+        'breadcrumbs': breadcrumbs,
+        'titulo': 'Agregar Nuevo Libro'
+    }
+    
+    return render(request, 'gestion_libros/agregar_libro.html', context)
 
 def listar_libros(request):
     libros = Libro.objects.all()
@@ -45,6 +64,7 @@ def detalle_libro(request, pk):
     libro = get_object_or_404(Libro, pk=pk)
     return render(request, 'gestion_libros/detalle_libro.html', {'libro': libro})
 
+@login_required
 def editar_libro(request, pk):
     """
     Vista para editar un libro existente.
@@ -97,7 +117,7 @@ def listar_autores(request):
     context = {
         'autores': autores,
         'title': 'Lista de Autores',
-        'breadcrumbs': [  # Lista de diccionarios
+        'breadcrumbs': [ 
             {
                 'name': 'Autores', 
                 'url': reverse('inicio:listar_autores')
@@ -108,7 +128,17 @@ def listar_autores(request):
    
 def detalle_autor(request, pk):
     autor = get_object_or_404(Autor, pk=pk)
-    return render(request, 'gestion_libros/detalle_autor.html', {'autor': autor})
+    
+    breadcrumbs = [
+        {'nombre': 'Inicio', 'url': reverse('inicio')}, 
+        {'nombre': 'Autores', 'url': reverse('lista_autores')}, 
+        {'nombre': f"{autor.nombre} {autor.apellido}", 'url': ''}, 
+    ]
+    
+    return render(request, 'gestion_libros/detalle_autor.html', {
+        'autor': autor,
+        'breadcrumbs': breadcrumbs
+    })
 
 @login_required
 def editar_autor(request, pk):
@@ -188,16 +218,75 @@ def listar_editoriales(request):
     return render(request, 'gestion_libros/editoriales.html', context)
 
 
+@login_required
 def agregar_editorial(request):
+    # Configuración de breadcrumbs
+    breadcrumbs = [
+        {'name': 'Editoriales', 'url': reverse('inicio:listar_editoriales')},
+        {'name': 'Agregar Editorial', 'url': ''}  # Último elemento sin enlace
+    ]
+    
     if request.method == 'POST':
         form = EditorialForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('inicio:listar_editoriales')  
+            editorial = form.save()
+            return redirect('inicio:listar_editoriales')
     else:
         form = EditorialForm()
     
-    return render(request, 'gestion_libros/agregar_editorial.html', {'form': form})
+    context = {
+        'form': form,
+        'breadcrumbs': breadcrumbs,
+        'titulo': 'Agregar Nueva Editorial'
+    }
+    
+    return render(request, 'gestion_libros/agregar_editorial.html', context)
+
+def detalle_editorial(request, pk):
+    """
+    Vista para mostrar los detalles de una editorial específica
+    """
+    editorial = get_object_or_404(Editorial, pk=pk)
+    context = {
+        'editorial': editorial,
+        'breadcrumbs': [
+            {'name': 'Editoriales', 'url': reverse('inicio:listar_editoriales')},
+            {'name': editorial.nombre, 'url': ''}
+        ]
+    }
+    return render(request, 'gestion_libros/detalle_editorial.html', context)
+
+@login_required
+def editar_editorial(request, pk):
+    editorial = get_object_or_404(Editorial, pk=pk)
+    
+    
+    is_admin = request.user.is_superuser
+    form = EditorialForm(instance=editorial, admin_user=is_admin)
+    
+    if request.method == 'POST':
+        form = EditorialForm(
+            request.POST, 
+            request.FILES, 
+            instance=editorial,
+            admin_user=is_admin
+        )
+        if form.is_valid():
+            form.save()
+            return redirect('inicio:detalle_editorial', pk=editorial.pk)
+    
+    context = {
+        'editorial': editorial,
+        'form': form,
+        'is_admin': is_admin,
+        'breadcrumbs': [
+            {'name': 'Editoriales', 'url': reverse('inicio:listar_editoriales')},
+            {'name': editorial.nombre, 'url': reverse('inicio:detalle_editorial', args=[editorial.pk])},
+            {'name': 'Editar', 'url': ''}
+        ]
+    }
+    return render(request, 'gestion_libros/editar_editorial.html', context)
+
 # SOBRE MI
 def sobre_mi(request):
     return render(request, 'gestion_libros/sobre_mi.html')
@@ -332,3 +421,17 @@ def politica_privacidad(request):
         ]
     }
     return render(request, 'gestion_libros/privacidad.html', context)
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser, login_url='/accounts/login/')
+def eliminar_editorial(request, pk):
+    editorial = get_object_or_404(Editorial, pk=pk)
+    
+    if request.method == 'POST':
+        nombre_editorial = editorial.nombre
+        editorial.delete()
+        messages.success(request, f'La editorial "{nombre_editorial}" ha sido eliminada correctamente')
+        return redirect('inicio:listar_editoriales')
+    
+    # Si alguien intenta acceder por GET, redirigir a detalle
+    return redirect('inicio:detalle_editorial', pk=pk)

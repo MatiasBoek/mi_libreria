@@ -4,7 +4,8 @@
 {% block title %}Agregar Editorial | Book Flow{% endblock %}
 
 {% block content %}
-<html lang="es">
+{% include 'breadcrumbs.html' %}
+
    <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -66,20 +67,16 @@
                             <div class="mb-4">
                                 <label for="{{ form.fundacion.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Año de Fundación</label>
                                 <input type="number" class="form-control" id="{{ form.fundacion.id_for_label }}" 
-                                       name="{{ form.fundacion.name }}" value="{{ form.fundacion.value|default:'' }}"
-                                       min="1000" max="{% now 'Y' %}" 
-                                       pattern="\d{4}" 
-                                       oninput="validarAno(this)"
-                                       required>
-                                <div class="form-text">Ingrese un año de 4 dígitos (ej: 1995)</div>
-                                <div id="ano-error" class="invalid-feedback d-none">
-                                    Por favor ingrese un año válido de 4 dígitos (entre 1000 y {% now 'Y' %})
-                                </div>
+                                    name="{{ form.fundacion.name }}" 
+                                    value="{{ form.fundacion.value|default:'' }}"
+                                    min="1000" 
+                                    max="{% now 'Y' %}">
                                 {% if form.fundacion.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ form.fundacion.errors|join:", " }}
                                 </div>
                                 {% endif %}
+                                <div class="form-text">Ingrese un año entre 1000 y {% now 'Y' %}</div>
                             </div>
                             
                             <!-- Sitio Web -->

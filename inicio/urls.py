@@ -23,6 +23,9 @@ urlpatterns = [
     # URLs para Editoriales
     path('editoriales/', views.listar_editoriales, name='listar_editoriales'),
     path('editoriales/agregar/', views.agregar_editorial, name='agregar_editorial'),
+    path('editoriales/detalle/<int:pk>/', views.detalle_editorial, name='detalle_editorial'),
+    path('editoriales/editar/<int:pk>/', views.editar_editorial, name='editar_editorial'),
+    path('editoriales/eliminar/<int:pk>/', views.eliminar_editorial, name='eliminar_editorial'),
     
     # Contacto
     path('contacto/', views.contacto, name='contacto'),
