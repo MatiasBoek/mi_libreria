@@ -130,9 +130,8 @@ def detalle_autor(request, pk):
     autor = get_object_or_404(Autor, pk=pk)
     
     breadcrumbs = [
-        {'nombre': 'Inicio', 'url': reverse('inicio')}, 
-        {'nombre': 'Autores', 'url': reverse('lista_autores')}, 
-        {'nombre': f"{autor.nombre} {autor.apellido}", 'url': ''}, 
+        {'name': 'Autores', 'url': reverse('inicio:listar_autores')},
+        {'name': f"{autor.nombre} {autor.apellido}", 'url': ''},
     ]
     
     return render(request, 'gestion_libros/detalle_autor.html', {

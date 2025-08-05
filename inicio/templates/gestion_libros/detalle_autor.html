@@ -1,4 +1,3 @@
-{# inicio/templates/gestion_libros/detalle_autor.html #}
 {% extends "gestion_libros/base.html" %}
 {% load static %}
 
@@ -31,7 +30,32 @@
                             <li class="list-group-item"><strong>Biografía:</strong>
                                 <p>{{ autor.biografia }}</p>
                             </li>
-                            {# Puedes añadir más detalles si los tienes en tu modelo Autor #}
+                            {% if autor.premios %}
+                                <div class="premios-section mb-4">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-light bg-gradient">
+                                            <h4 class="mb-0 text-dark">
+                                                <i class="bi bi-trophy-fill text-warning me-2"></i>
+                                                Premios y Reconocimientos
+                                            </h4>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <ul class="list-group list-group-flush premios-list">
+                                                {% for premio in autor.premios.splitlines %}
+                                                    {% if premio.strip %}
+                                                    <li class="list-group-item border-light py-3 px-4">
+                                                        <div class="d-flex align-items-start">
+                                                            <i class="bi bi-award-fill text-warning mt-1 me-3 fs-5"></i>
+                                                            <div class="premio-text">{{ premio.strip }}</div>
+                                                        </div>
+                                                    </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                           
                         </ul>
                         <div class="d-flex justify-content-end">
                             <a href="{% url 'inicio:listar_autores' %}" class="btn btn-outline-secondary me-2">

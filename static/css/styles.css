@@ -11986,19 +11986,35 @@ a, button, .nav-link, .dropdown-item {
         position: relative;
     }
     
-    .leer-mas-btn {
-        cursor: pointer;
-        color: #0d6efd;
-        text-decoration: underline;
-        background: none;
-        border: none;
-        padding: 0;
-    }
-    
-    .leer-mas-btn:hover {
-        text-decoration: none;
-    }
-    
-    .biografia-completa {
-        padding-top: 10px;
-    }
+.premios-section .card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.premios-list .list-group-item {
+    border-left: none;
+    border-right: none;
+    transition: background-color 0.2s;
+}
+
+.premios-list .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.premios-list .list-group-item:first-child {
+    border-top: none;
+}
+
+.premios-list .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.premio-text {
+    flex: 1;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.bg-gradient {
+    background: linear-gradient(to right, #f8f9fa, #ffffff);
+}
