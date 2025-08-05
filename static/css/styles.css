@@ -188,6 +188,12 @@ a {
         text-align: justify;
         font-size: 1.05rem;
     }
+    .card {
+        border-radius: 10px;
+    }
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
 
 /* ======================
    COMPONENTES: BREADCRUMBS

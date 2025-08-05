@@ -27,10 +27,80 @@
                     
                     <!-- Reseña/Descripción completa -->
                     <div class="border-top pt-3">
-                        <h3 class="h5 fw-bold mb-3">Reseña completa</h3>
+                        <h3 class="h5 fw-bold mb-3">Descripción</h3>
                         <div class="libro-descripcion">
                             {{ libro.descripcion|linebreaks }}
                         </div>
+                    </div>
+                    
+                    <!-- Sección de Reseñas -->
+                    <div class="border-top pt-4 mt-4">
+                        <h3 class="h5 fw-bold mb-3">Reseñas</h3>
+                        
+                        <!-- Lista de reseñas existentes -->
+                        <div class="mb-4">
+                            {% for resena in libro.resena_set.all %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div>
+                                            <span class="fw-bold">{{ resena.usuario.username }}</span>
+                                            <span class="text-muted ms-2">
+                                                <i class="bi bi-star-fill text-warning"></i> {{ resena.calificacion }}/5
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">{{ resena.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <h5 class="card-title">{{ resena.titulo }}</h5>
+                                    <p class="card-text">{{ resena.contenido|linebreaks }}</p>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="alert alert-info">
+                                Aún no hay reseñas para este libro.
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Formulario para nueva reseña (solo usuarios autenticados) -->
+                        {% if user.is_authenticated %}
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <i class="bi bi-pencil"></i> Escribe tu reseña
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="{% url 'inicio:crear_resena' libro.pk %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="titulo" class="form-label">Título de la reseña</label>
+                                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="contenido" class="form-label">Contenido</label>
+                                        <textarea class="form-control" id="contenido" name="contenido" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="calificacion" class="form-label">Calificación (1-5)</label>
+                                        <select class="form-select" id="calificacion" name="calificacion" required>
+                                            <option value="" selected disabled>Selecciona una calificación</option>
+                                            <option value="1">1 - Muy pobre</option>
+                                            <option value="2">2 - Pobre</option>
+                                            <option value="3">3 - Regular</option>
+                                            <option value="4">4 - Bueno</option>
+                                            <option value="5">5 - Excelente</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send"></i> Publicar reseña
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> Debes <a href="{% url 'inicio:login' %}">iniciar sesión</a> para escribir una reseña.
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <!-- Botón de volver -->
@@ -45,5 +115,16 @@
     </div>
 </div>
 
-
+<style>
+    .libro-descripcion {
+        line-height: 1.8;
+        text-align: justify;
+    }
+    .card {
+        border-radius: 10px;
+    }
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+</style>
 {% endblock %}

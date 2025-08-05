@@ -17,8 +17,9 @@ urlpatterns = [
     # URLs para Libros
     path('libros/', views.listar_libros, name='listar_libros'),
     path('libros/agregar/', views.agregar_libro, name='agregar_libro'),
-    # path('libros/<int:pk>/', views.detalle_libro, name='detalle_libro'),
-    # path('libros/editar/<int:pk>/', views.editar_libro, name='editar_libro'),
+    path('libros/<int:pk>/', views.detalle_libro, name='detalle_libro'),
+    path('libros/editar/<int:pk>/', views.editar_libro, name='editar_libro'),
+    path('libros/<int:libro_id>/resena/', views.crear_resena, name='crear_resena'),
     
     # URLs para Editoriales
     path('editoriales/', views.listar_editoriales, name='listar_editoriales'),

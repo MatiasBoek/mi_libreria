@@ -57,47 +57,69 @@ def listar_libros(request):
     }
     return render(request, 'gestion_libros/libros.html', context)
 
-# def detalle_libro(request, pk):
-#     """
-#     Vista para mostrar los detalles de un libro específico
-#     """
-#     libro = get_object_or_404(Libro, pk=pk)
+def detalle_libro(request, pk):
+    """
+    Vista para mostrar los detalles de un libro específico
+    """
+    libro = get_object_or_404(Libro, pk=pk)
     
-#     context = {
-#         'libro': libro,
-#         'breadcrumbs': [
-#             {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
-#             {'name': libro.titulo, 'url': ''}
-#         ]
-#     }
-#     return render(request, 'gestion_libros/detalle_libro.html', context)
+    context = {
+        'libro': libro,
+        'breadcrumbs': [
+            {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+            {'name': libro.titulo, 'url': ''}
+        ]
+    }
+    return render(request, 'gestion_libros/detalle_libro.html', context)
 
-# @login_required
-# def editar_libro(request, pk):
-#     """
-#     Vista para editar un libro existente
-#     """
-#     libro = get_object_or_404(Libro, pk=pk)
+@login_required
+def editar_libro(request, pk):
+    libro = get_object_or_404(Libro, pk=pk)
     
-#     if request.method == 'POST':
-#         form = LibroForm(request.POST, request.FILES, instance=libro)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'El libro se ha actualizado correctamente')
-#             return redirect('inicio:detalle_libro', pk=libro.pk)
-#     else:
-#         form = LibroForm(instance=libro)
+    if request.method == 'POST':
+        form = LibroForm(request.POST, request.FILES, instance=libro)
+        
+        # Manejar guardado del libro
+        if 'guardar_libro' in request.POST and form.is_valid():
+            form.save()
+            messages.success(request, f'El libro "{libro.titulo}" se ha actualizado correctamente')
+            return redirect('inicio:detalle_libro', pk=libro.pk)
+        
+        # Manejar creación de reseña
+        elif 'guardar_resena' in request.POST:
+            titulo = request.POST.get('resena_titulo', '').strip()
+            contenido = request.POST.get('resena_contenido', '').strip()
+            calificacion = request.POST.get('resena_calificacion')
+            
+            if titulo and contenido and calificacion:
+                Resena.objects.create(
+                    usuario=request.user,
+                    tipo='LIBRO',
+                    libro=libro,
+                    titulo=titulo,
+                    contenido=contenido,
+                    calificacion=int(calificacion)
+                )
+                messages.success(request, 'Tu reseña ha sido guardada exitosamente')
+            else:
+                messages.error(request, 'Todos los campos de la reseña son obligatorios')
+            
+            return redirect('inicio:editar_libro', pk=libro.pk)
+    else:
+        form = LibroForm(instance=libro)
     
-    # context = {
-    #     'form': form,
-    #     'libro': libro,
-    #     'breadcrumbs': [
-    #         {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
-    #         {'name': libro.titulo, 'url': reverse('inicio:detalle_libro', args=[libro.pk])},
-    #         {'name': 'Editar', 'url': ''}
-    #     ]
-    # }
-    # return render(request, 'gestion_libros/editar_libro.html', context)
+    breadcrumbs = [
+        {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+        {'name': libro.titulo, 'url': reverse('inicio:detalle_libro', args=[libro.pk])},
+        {'name': 'Editar', 'url': ''}
+    ]
+    
+    context = {
+        'form': form,
+        'libro': libro,
+        'breadcrumbs': breadcrumbs
+    }
+    return render(request, 'gestion_libros/editar_libro.html', context)
 
 # AUTOR
 
@@ -322,18 +344,28 @@ def listar_resenas(request):
 
 
 @login_required
-def crear_resena(request):
-    if request.method == 'POST':
-        form = ResenaForm(request.POST)
-        if form.is_valid():
-            resena = form.save(commit=False)
-            resena.usuario = request.user
-            resena.save()
-            return redirect('inicio:listar_resenas')
-    else:        
-        form = ResenaForm()    
+def crear_resena(request, libro_id):
+    libro = get_object_or_404(Libro, pk=libro_id)
     
-    return render(request, 'gestion_libros/crear_resena.html', {'form': form})
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo', '').strip()
+        contenido = request.POST.get('contenido', '').strip()
+        calificacion = request.POST.get('calificacion')
+        
+        if titulo and contenido and calificacion:
+            Resena.objects.create(
+                usuario=request.user,
+                tipo='LIBRO',
+                libro=libro,
+                titulo=titulo,
+                contenido=contenido,
+                calificacion=int(calificacion)
+            )
+            messages.success(request, 'Tu reseña ha sido publicada exitosamente')
+        else:
+            messages.error(request, 'Por favor completa todos los campos de la reseña')
+    
+    return redirect('inicio:detalle_libro', pk=libro_id)
 
 def detalle_resena(request, pk):
     resena = get_object_or_404(Resena, pk=pk)
@@ -347,10 +379,6 @@ def mis_resenas(request):
 def listar_paginas(request):
     pages = Page.objects.all()
     return render(request, 'pages/list.html', {'pages': pages})
-
-def detalle_pagina(request, pk):
-    page = get_object_or_404(Page, pk=pk)
-    return render(request, 'pages/detail.html', {'page': page})
 
 #AUTENTICACION
 
@@ -453,3 +481,27 @@ def eliminar_editorial(request, pk):
     
     # Si alguien intenta acceder por GET, redirigir a detalle
     return redirect('inicio:detalle_editorial', pk=pk)
+
+@login_required
+def crear_resena(request, libro_id):
+    libro = get_object_or_404(Libro, pk=libro_id)
+    
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo', '').strip()
+        contenido = request.POST.get('contenido', '').strip()
+        calificacion = request.POST.get('calificacion')
+        
+        if titulo and contenido and calificacion:
+            Resena.objects.create(
+                usuario=request.user,
+                tipo='LIBRO',
+                libro=libro,
+                titulo=titulo,
+                contenido=contenido,
+                calificacion=int(calificacion)
+            )
+            messages.success(request, 'Tu reseña ha sido publicada exitosamente')
+        else:
+            messages.error(request, 'Por favor completa todos los campos de la reseña')
+    
+    return redirect('inicio:detalle_libro', pk=libro_id)

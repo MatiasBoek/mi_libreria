@@ -62,22 +62,28 @@ class AutorForm(forms.ModelForm):
 class EditorialForm(forms.ModelForm):
     class Meta:
         model = Editorial
-        fields = '__all__'
-        widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'pais': forms.TextInput(attrs={'class': 'form-control'}),
-            'sitio_web': forms.URLInput(attrs={'class': 'form-control'}),
-            'logo': forms.ClearableFileInput(attrs={'class': 'form-control'})
+        fields = ['nombre', 'pais', 'fundacion', 'sitio_web', 'logo', 'descripcion']
+        labels = {
+            'nombre': 'Nombre de la Editorial',
+            'pais': 'País',
+            'fundacion': 'Año de Fundación',
+            'sitio_web': 'Sitio Web',
+            'logo': 'Logo',
+            'descripcion': 'Descripción'
         }
-    
+        error_messages = {
+            'nombre': {
+                'required': 'El nombre de la editorial es obligatorio',
+                'min_length': 'El nombre debe tener al menos 3 caracteres'
+            }
+        }
+
     def __init__(self, *args, **kwargs):
-        self.admin_user = kwargs.pop('admin_user', False)
         super().__init__(*args, **kwargs)
-        
-        if not self.admin_user:
-            for field_name in self.fields:
-                if field_name != 'logo':  
-                    self.fields[field_name].disabled = True
+        self.fields['nombre'].widget.attrs.update({
+            'minlength': '3',
+            'placeholder': 'Ingrese el nombre completo'
+        })
 
 class LibroForm(forms.ModelForm):
     class Meta:
