@@ -64,52 +64,73 @@ class EditorialForm(forms.ModelForm):
         model = Editorial
         fields = '__all__'
         widgets = {
-            'nombre': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Penguin Random House'
-            }),
-            'pais': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Argentina'
-            }),
-            'sitio_web': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: https://www.penguinrandomhouse.com/'
-            }),
-            'fundacion': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '1500',
-                'max': '2025'  # Año actual
-            }),
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'pais': forms.TextInput(attrs={'class': 'form-control'}),
+            'sitio_web': forms.URLInput(attrs={'class': 'form-control'}),
+            'logo': forms.ClearableFileInput(attrs={'class': 'form-control'})
         }
-        labels = {
-            'nombre': 'Nombre de la editorial',
-            'pais': 'País de origen',
-            'sitio_web': 'Sitio web oficial',
-            'fundacion': 'Año de fundación'
-        }
+    
+    def __init__(self, *args, **kwargs):
+        self.admin_user = kwargs.pop('admin_user', False)
+        super().__init__(*args, **kwargs)
+        
+        if not self.admin_user:
+            for field_name in self.fields:
+                if field_name != 'logo':  
+                    self.fields[field_name].disabled = True
 
 class LibroForm(forms.ModelForm):
     class Meta:
         model = Libro
         fields = '__all__'
-
-class BusquedaForm(forms.Form):
-    termino_busqueda = forms.CharField(label='Buscar', max_length=100)
-    
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'autor': forms.Select(attrs={'class': 'form-select'}),
+            'editorial': forms.Select(attrs={'class': 'form-select'}),
+            'año_publicacion': forms.NumberInput(attrs={'class': 'form-control'}),
+            'paginas': forms.NumberInput(attrs={'class': 'form-control'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'portada': forms.FileInput(attrs={'class': 'form-control'}),
+            'disponible': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        labels = {
+            'titulo': 'Título del libro',
+            'año_publicacion': 'Año de publicación',
+            'descripcion': 'Descripción/Reseña',
+        }
+            
 # BLOG
 
-
+class BusquedaForm(forms.Form):
+    termino = forms.CharField(
+        label='Buscar',
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese término de búsqueda'
+        })
+    )
+    
 class ResenaForm(forms.ModelForm):
     class Meta:
         model = Resena
-        fields = ['tipo', 'libro', 'autor', 'editorial', 'titulo', 'contenido', 'puntuacion']
+        fields = ['contenido', 'calificacion', 'libro', 'usuario']  
         widgets = {
-            'contenido': forms.Textarea(attrs={'rows': 5}),
+            'contenido': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Escribe tu reseña aquí...'
+            }),
+            'calificacion': forms.NumberInput(attrs={ 
+                'class': 'form-control',
+                'min': 1,
+                'max': 5
+            }),
+            'libro': forms.HiddenInput(),
+            'usuario': forms.HiddenInput()
         }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['libro'].required = False
-        self.fields['autor'].required = False
-        self.fields['editorial'].required = False
+        labels = {
+            'contenido': 'Tu reseña',
+            'calificacion': 'Calificación (1-5)'
+        }

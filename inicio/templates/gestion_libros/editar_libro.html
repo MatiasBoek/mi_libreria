@@ -1,0 +1,95 @@
+{% extends 'gestion_libros/base.html' %}
+{% load static %}
+
+{% block title %}Editar {{ libro.titulo }} | Book Flow{% endblock %}
+
+{% block content %}
+{% include 'breadcrumbs.html' %}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="fw-bold mb-4">Editar libro: {{ libro.titulo }}</h2>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- Columna izquierda -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.titulo.id_for_label }}" class="form-label">Título</label>
+                                    {{ form.titulo }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.autor.id_for_label }}" class="form-label">Autor</label>
+                                    {{ form.autor }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.editorial.id_for_label }}" class="form-label">Editorial</label>
+                                    {{ form.editorial }}
+                                </div>
+                            </div>
+                            
+                            <!-- Columna derecha -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.año_publicacion.id_for_label }}" class="form-label">Año de publicación</label>
+                                    {{ form.año_publicacion }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.paginas.id_for_label }}" class="form-label">Páginas</label>
+                                    {{ form.paginas }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.precio.id_for_label }}" class="form-label">Precio</label>
+                                    {{ form.precio }}
+                                </div>
+                            </div>
+                            
+                            <!-- Campos de ancho completo -->
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción/Reseña</label>
+                                    {{ form.descripcion }}
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.portada.id_for_label }}" class="form-label">Portada del libro</label>
+                                    {{ form.portada }}
+                                    {% if libro.portada %}
+                                        <div class="mt-2">
+                                            <small>Portada actual:</small>
+                                            <img src="{{ libro.portada.url }}" alt="Portada actual" class="img-thumbnail mt-1" style="max-height: 100px;">
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3 form-check">
+                                    {{ form.disponible }}
+                                    <label class="form-check-label" for="{{ form.disponible.id_for_label }}">Disponible</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a href="{% url 'inicio:detalle_libro' libro.pk %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i> Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

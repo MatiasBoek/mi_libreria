@@ -17,8 +17,8 @@ urlpatterns = [
     # URLs para Libros
     path('libros/', views.listar_libros, name='listar_libros'),
     path('libros/agregar/', views.agregar_libro, name='agregar_libro'),
-    path('libros/<int:pk>/', views.detalle_libro, name='detalle_libro'),
-    path('libros/editar/<int:pk>/', views.editar_libro, name='editar_libro'),
+    # path('libros/<int:pk>/', views.detalle_libro, name='detalle_libro'),
+    # path('libros/editar/<int:pk>/', views.editar_libro, name='editar_libro'),
     
     # URLs para Editoriales
     path('editoriales/', views.listar_editoriales, name='listar_editoriales'),
@@ -44,6 +44,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('logout-exito/', views.logout_exito_view, name='logout_exito'),
     path('perfil/', views.perfil_usuario, name='perfil'),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     
     # Password reset URLs
     path('recuperar-contrasena/', auth_views.PasswordResetView.as_view(

@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import date
@@ -203,7 +203,7 @@ class Editorial(models.Model):
             return self.logo.url
         return '/static/img/default-editorial.png'
 
-class Libro(models.Model):
+class Libro(models.Model):    
     titulo = models.CharField(
         max_length=200,
         verbose_name="Título",
@@ -245,6 +245,17 @@ class Libro(models.Model):
         verbose_name="Disponible",
         default=True
     )
+    
+    portada = models.ImageField(
+        verbose_name="Portada del libro",
+        upload_to='portadas/',
+        null=True,
+        blank=True,
+        help_text="Formato: JPG, PNG o WEBP. Tamaño recomendado: 500x800px",
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp'])
+        ]
+    )
     class Meta:
         verbose_name = "Libro"
         verbose_name_plural = "Libros"
@@ -278,8 +289,7 @@ class Resena(models.Model):
     contenido = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-    puntuacion = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)], null=True, blank=True)
-    
+    calificacion = models.IntegerField()
     class Meta:
         ordering = ['-fecha_creacion']
     

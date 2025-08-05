@@ -57,32 +57,47 @@ def listar_libros(request):
     }
     return render(request, 'gestion_libros/libros.html', context)
 
-def detalle_libro(request, pk):
-    """
-    Vista para mostrar los detalles de un libro específico.
-    """
-    libro = get_object_or_404(Libro, pk=pk)
-    return render(request, 'gestion_libros/detalle_libro.html', {'libro': libro})
-
-@login_required
-def editar_libro(request, pk):
-    """
-    Vista para editar un libro existente.
-    """
-    libro = get_object_or_404(Libro, pk=pk)
-    if request.method == 'POST':
-        form = LibroForm(request.POST, instance=libro)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'El libro se ha actualizado con éxito.')
-            return redirect('inicio:detalle_libro', pk=libro.pk)
-    else:
-        form = LibroForm(instance=libro)
+# def detalle_libro(request, pk):
+#     """
+#     Vista para mostrar los detalles de un libro específico
+#     """
+#     libro = get_object_or_404(Libro, pk=pk)
     
-    return render(request, 'gestion_libros/editar_libro.html', {
-        'form': form,
-        'libro': libro
-    })
+#     context = {
+#         'libro': libro,
+#         'breadcrumbs': [
+#             {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+#             {'name': libro.titulo, 'url': ''}
+#         ]
+#     }
+#     return render(request, 'gestion_libros/detalle_libro.html', context)
+
+# @login_required
+# def editar_libro(request, pk):
+#     """
+#     Vista para editar un libro existente
+#     """
+#     libro = get_object_or_404(Libro, pk=pk)
+    
+#     if request.method == 'POST':
+#         form = LibroForm(request.POST, request.FILES, instance=libro)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'El libro se ha actualizado correctamente')
+#             return redirect('inicio:detalle_libro', pk=libro.pk)
+#     else:
+#         form = LibroForm(instance=libro)
+    
+    # context = {
+    #     'form': form,
+    #     'libro': libro,
+    #     'breadcrumbs': [
+    #         {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+    #         {'name': libro.titulo, 'url': reverse('inicio:detalle_libro', args=[libro.pk])},
+    #         {'name': 'Editar', 'url': ''}
+    #     ]
+    # }
+    # return render(request, 'gestion_libros/editar_libro.html', context)
 
 # AUTOR
 
@@ -255,29 +270,25 @@ def detalle_editorial(request, pk):
     }
     return render(request, 'gestion_libros/detalle_editorial.html', context)
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 @login_required
+@user_passes_test(lambda u: u.is_superuser, login_url='/accounts/login/')
 def editar_editorial(request, pk):
     editorial = get_object_or_404(Editorial, pk=pk)
     
-    
-    is_admin = request.user.is_superuser
-    form = EditorialForm(instance=editorial, admin_user=is_admin)
-    
     if request.method == 'POST':
-        form = EditorialForm(
-            request.POST, 
-            request.FILES, 
-            instance=editorial,
-            admin_user=is_admin
-        )
+        form = EditorialForm(request.POST, request.FILES, instance=editorial)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Editorial actualizada correctamente')
             return redirect('inicio:detalle_editorial', pk=editorial.pk)
+    else:
+        form = EditorialForm(instance=editorial)
     
     context = {
         'editorial': editorial,
         'form': form,
-        'is_admin': is_admin,
         'breadcrumbs': [
             {'name': 'Editoriales', 'url': reverse('inicio:listar_editoriales')},
             {'name': editorial.nombre, 'url': reverse('inicio:detalle_editorial', args=[editorial.pk])},
@@ -285,6 +296,7 @@ def editar_editorial(request, pk):
         ]
     }
     return render(request, 'gestion_libros/editar_editorial.html', context)
+
 
 # SOBRE MI
 def sobre_mi(request):
@@ -307,24 +319,6 @@ def contacto(request):
 def listar_resenas(request):
     resenas = Resena.objects.all()
     return render(request, 'gestion_libros/resenas.html', {'resenas': resenas})
-
-def registro(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('inicio:inicio')
-    else:
-        form = UserCreationForm()
-    
-    context = {
-        'form': form,
-        'breadcrumbs': [
-            {'name': 'Registro', 'url': reverse('inicio:registro')}
-        ]
-    }
-    return render(request, 'gestion_libros/registro.html', context)
 
 
 @login_required
@@ -361,6 +355,9 @@ def detalle_pagina(request, pk):
 #AUTENTICACION
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('inicio:inicio')
+        
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -369,7 +366,8 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('inicio:inicio')
+                next_url = request.GET.get('next', 'inicio:inicio')
+                return redirect(next_url)
     else:
         form = AuthenticationForm()
     
@@ -379,8 +377,29 @@ def login_view(request):
             {'name': 'Iniciar sesión', 'url': reverse('inicio:login')}
         ]
     }
-        
     return render(request, 'gestion_libros/login.html', context)
+
+def registro(request):
+    if request.user.is_authenticated:
+        return redirect('inicio:inicio')
+        
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, '¡Registro exitoso!')
+            return redirect('inicio:inicio')
+    else:
+        form = UserCreationForm()
+    
+    context = {
+        'form': form,
+        'breadcrumbs': [
+            {'name': 'Registro', 'url': reverse('inicio:registro')}
+        ]
+    }
+    return render(request, 'gestion_libros/registro.html', context)
 
 @require_http_methods(["GET", "POST"])
 @login_required
