@@ -19,7 +19,14 @@ urlpatterns = [
     path('libros/agregar/', views.agregar_libro, name='agregar_libro'),
     path('libros/<int:pk>/', views.detalle_libro, name='detalle_libro'),
     path('libros/editar/<int:pk>/', views.editar_libro, name='editar_libro'),
+    
+    #Reseñas
     path('libros/<int:libro_id>/resena/', views.crear_resena, name='crear_resena'),
+    path('resenas/', views.listar_resenas, name='listar_resenas'),
+    path('resenas/nueva/', views.crear_resena, name='crear_resena'),
+    path('resenas/<int:pk>/', views.detalle_resena, name='detalle_resena'),
+    path('mis-resenas/', views.mis_resenas, name='mis_resenas'),
+    path('resena/editar/<int:pk>/', views.editar_resena, name='editar_resena'),
     
     # URLs para Editoriales
     path('editoriales/', views.listar_editoriales, name='listar_editoriales'),
@@ -36,12 +43,7 @@ urlpatterns = [
     
     # path('libros/<int:libro_pk>/reseñas/nueva/', views.agregar_resena, name='agregar_resena'),
     
-    #Blog
-    path('resenas/', views.listar_resenas, name='listar_resenas'),
-    path('resenas/nueva/', views.crear_resena, name='crear_resena'),
-    path('resenas/<int:pk>/', views.detalle_resena, name='detalle_resena'),
-    path('mis-resenas/', views.mis_resenas, name='mis_resenas'),
-    path('resena/editar/<int:pk>/', views.editar_resena, name='editar_resena'),
+  
     
     path('registro/', views.registro, name='registro'),
     path('login/', views.login_view, name='login'),

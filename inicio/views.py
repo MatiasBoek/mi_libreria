@@ -73,6 +73,7 @@ def detalle_libro(request, pk):
     return render(request, 'gestion_libros/detalle_libro.html', context)
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser, login_url='/accounts/login/')
 def editar_libro(request, pk):
     libro = get_object_or_404(Libro, pk=pk)
     
@@ -177,6 +178,7 @@ def detalle_autor(request, pk):
     })
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser, login_url='/accounts/login/')
 def editar_autor(request, pk):
     autor = get_object_or_404(Autor, pk=pk)
     form = AutorForm(instance=autor)
@@ -336,7 +338,7 @@ def contacto(request):
     return render(request, 'gestion_libros/contacto.html', context)
 
 
-# BLOG
+# RESEÑAS
 
 def listar_resenas(request):
     resenas = Resena.objects.all()
@@ -407,6 +409,39 @@ def editar_resena(request, pk):
         'resena': resena,
     }
     return render(request, 'gestion_libros/editar_resena.html', context)
+
+@login_required
+def agregar_resena(request, libro_pk):
+    libro = get_object_or_404(Libro, pk=libro_pk)
+    
+    # Breadcrumbs (migas de pan)
+    breadcrumbs = [
+        {'name': 'Inicio', 'url': reverse('inicio')},
+        {'name': 'Libros', 'url': reverse('lista_libros')},
+        {'name': libro.titulo, 'url': reverse('detalle_libro', kwargs={'pk': libro.pk})},
+        {'name': 'Nueva Reseña', 'url': ''},
+    ]
+    
+    if request.method == 'POST':
+        form = ResenaForm(request.POST)
+        if form.is_valid():
+            resena = form.save(commit=False)
+            resena.libro = libro
+            resena.usuario = request.user
+            resena.save()
+            messages.success(request, '¡Reseña publicada con éxito!')
+            return redirect('detalle_libro', pk=libro.pk)
+    else:
+        form = ResenaForm()
+    
+    context = {
+        'form': form,
+        'libro': libro,
+        'breadcrumbs': breadcrumbs,
+    }
+    
+    return render(request, 'gestion_libros/agregar_resena.html', context)
+
 #AUTENTICACION
 
 def login_view(request):

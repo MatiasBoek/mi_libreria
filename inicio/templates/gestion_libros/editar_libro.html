@@ -91,7 +91,7 @@
                                                         {% endwith %}
                                                     </div>
                                                     {% if resena.usuario == request.user %}
-                                                    <a href="{% url 'editar_resena' resena.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    <a href="{% url 'inicio:editar_resena' resena.pk %}" class="btn btn-sm btn-outline-primary">
                                                         <i class="bi bi-pencil"></i> Editar
                                                     </a>
                                                     {% endif %}
@@ -105,11 +105,6 @@
                             <p class="text-muted">No hay reseñas para este libro.</p>
                         {% endif %}
                         {% endwith %}
-                        
-                        <!-- Formulario para nueva reseña (Separado) -->
-                        <form method="post" action="{% url 'agregar_resena' libro.pk %}">
-                            {% csrf_token %}
-                            <h5 class="mt-4">Agregar nueva reseña:</h5>
                             
                             <div class="mb-3">
                                 <label for="resena-titulo" class="form-label">Título</label>
@@ -153,15 +148,4 @@
     </div>
 </section>
 
-<style>
-    /* Tus estilos actuales se mantienen */
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-    }
-    .resena-card {
-        border-left: 4px solid #0d6efd;
-    }
-    /* ... otros estilos ... */
-</style>
 {% endblock %}
