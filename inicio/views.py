@@ -380,6 +380,33 @@ def listar_paginas(request):
     pages = Page.objects.all()
     return render(request, 'pages/list.html', {'pages': pages})
 
+@login_required
+def editar_resena(request, pk):
+    resena = get_object_or_404(Resena, pk=pk)
+    
+    breadcrumbs = [
+        {'name': 'Inicio', 'url': reverse('inicio')},  # Cambia 'inicio' por el nombre de tu URL de inicio
+        {'name': 'Reseñas', 'url': reverse('lista_resenas')},  # Nombre de tu URL de listado
+        {'name': f'Editar: {resena.titulo}', 'url': ''},
+    ]
+    
+    if request.method == 'POST':
+        form = ResenaForm(request.POST, instance=resena)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Reseña actualizada correctamente!')
+            return redirect('detalle_resena', pk=resena.pk)
+        else:
+            messages.error(request, '¡Error al actualizar! Revise los campos.')  
+    else:
+        form = ResenaForm(instance=resena)
+    
+    context = {
+        'form': form,
+        'breadcrumbs': breadcrumbs,
+        'resena': resena,
+    }
+    return render(request, 'gestion_libros/editar_resena.html', context)
 #AUTENTICACION
 
 def login_view(request):
@@ -505,3 +532,4 @@ def crear_resena(request, libro_id):
             messages.error(request, 'Por favor completa todos los campos de la reseña')
     
     return redirect('inicio:detalle_libro', pk=libro_id)
+

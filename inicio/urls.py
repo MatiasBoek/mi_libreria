@@ -34,11 +34,14 @@ urlpatterns = [
     # Sobre mi
     path('sobre-mi/', views.sobre_mi, name='sobre_mi'),
     
+    # path('libros/<int:libro_pk>/reseñas/nueva/', views.agregar_resena, name='agregar_resena'),
+    
     #Blog
     path('resenas/', views.listar_resenas, name='listar_resenas'),
     path('resenas/nueva/', views.crear_resena, name='crear_resena'),
     path('resenas/<int:pk>/', views.detalle_resena, name='detalle_resena'),
     path('mis-resenas/', views.mis_resenas, name='mis_resenas'),
+    path('resena/editar/<int:pk>/', views.editar_resena, name='editar_resena'),
     
     path('registro/', views.registro, name='registro'),
     path('login/', views.login_view, name='login'),
@@ -69,7 +72,6 @@ urlpatterns = [
     ), name='password_reset_complete'),
         
     path('pages/', views.listar_paginas, name='listar_paginas'),
-    path('pages/<int:pk>/', views.detalle_pagina, name='detalle_pagina'),
     
     path('terminos-condiciones/', views.terminos_condiciones, name='terminos_condiciones'),
     

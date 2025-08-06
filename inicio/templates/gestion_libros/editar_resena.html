@@ -1,0 +1,19 @@
+{% extends "gestion_libros/base.html" %}
+{% load static %}
+
+{% block title %}Editar Reseña | Book Flow{% endblock %}
+
+{% block content %}
+{% include 'breadcrumbs.html' %}
+<div class="container mt-4">
+    <h2>Editar Reseña</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form.as_p }}  <!-- Muestra el formulario automáticamente -->
+
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'nombre_de_la_url_de_detalle' resena.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

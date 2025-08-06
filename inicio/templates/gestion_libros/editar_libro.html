@@ -8,6 +8,7 @@
 
 <section class="py-5">
     <div class="container px-5 my-5">
+        <!-- Encabezado -->
         <div class="text-center mb-5">
             <h1 class="display-5 fw-bolder mb-0">
                 <span class="text-gradient d-inline">Editar Libro</span>
@@ -17,7 +18,7 @@
         
         <div class="row gx-5 justify-content-center">
             <div class="col-lg-8 col-xl-6">
-                <!-- Form Card -->
+                <!-- Formulario Principal del Libro -->
                 <div class="card shadow border-0 rounded-4 mb-5">
                     <div class="card-body p-5">
                         <form method="post" enctype="multipart/form-data" id="libro-form">
@@ -41,101 +42,108 @@
                                 </div>
                             {% endfor %}
                             
-                            <!-- Sección de Reseñas -->
-                            <div class="mb-4 border-top pt-4">
-                                <h4 class="fw-bold mb-3">Reseñas</h4>
-                                
-                                <!-- Lista de reseñas existentes -->
-                                {% with libro.resena_set.all as reseñas %}
-                                {% if reseñas %}
-                                    <div class="mb-4">
-                                        <h5>Reseñas existentes:</h5>
-                                        <div class="list-group">
-                                            {% for resena in reseñas %}
-                                                <div class="list-group-item mb-3 resena-card">
-                                                    <div class="d-flex justify-content-between align-items-start">
-                                                        <div>
-                                                            <strong>{{ resena.usuario.username }}</strong>
-                                                            <span class="badge bg-secondary ms-2">{{ resena.get_tipo_display }}</span>
-                                                        </div>
-                                                        <small class="text-muted">{{ resena.fecha_creacion|date:"d/m/Y H:i" }}</small>
-                                                    </div>
-                                                    <h6 class="mt-2">{{ resena.titulo }}</h6>
-                                                    <div class="mt-2">
-                                                        <p>{{ resena.contenido|linebreaks }}</p>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div class="calificacion">
-                                                                {% with ''|center:resena.calificacion as range %}
-                                                                {% for _ in range %}
-                                                                    <i class="bi bi-star-fill text-warning"></i>
-                                                                {% endfor %}
-                                                                {% endwith %}
-                                                                {% with ''|center:5|slice:resena.calificacion as range %}
-                                                                {% for _ in range %}
-                                                                    <i class="bi bi-star text-warning"></i>
-                                                                {% endfor %}
-                                                                {% endwith %}
-                                                            </div>
-                                                            {% if resena.usuario == request.user %}
-                                                            <a href="{% url 'inicio:editar_resena' resena.pk %}" class="btn btn-sm btn-outline-primary">
-                                                                <i class="bi bi-pencil"></i> Editar
-                                                            </a>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <p class="text-muted">No hay reseñas para este libro.</p>
-                                {% endif %}
-                                {% endwith %}
-                                
-                                <!-- Formulario para nueva reseña -->
-                                <div class="mt-4">
-                                    <h5>Agregar nueva reseña:</h5>
-                                    <input type="hidden" name="tipo_resena" value="LIBRO">
-                                    
-                                    <div class="mb-3">
-                                        <label for="resena-titulo" class="form-label">Título de la reseña</label>
-                                        <input type="text" class="form-control" id="resena-titulo" name="resena_titulo" required>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="resena-contenido" class="form-label">Contenido</label>
-                                        <textarea class="form-control" id="resena-contenido" name="resena_contenido" rows="4" required></textarea>
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="resena-calificacion" class="form-label">Calificación (1-5)</label>
-                                            <select class="form-select" id="resena-calificacion" name="resena_calificacion" required>
-                                                <option value="">Seleccione...</option>
-                                                <option value="1">1 - Muy pobre</option>
-                                                <option value="2">2 - Pobre</option>
-                                                <option value="3">3 - Regular</option>
-                                                <option value="4">4 - Bueno</option>
-                                                <option value="5">5 - Excelente</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Botones -->
+                            <!-- Botones del formulario principal -->
                             <div class="d-flex justify-content-between mt-5">
                                 <a href="{% url 'inicio:detalle_libro' libro.pk %}" class="btn btn-outline-secondary px-4">
                                     <i class="bi bi-arrow-left me-2"></i> Cancelar
                                 </a>
-                                <div>
-                                    <button type="submit" name="guardar_libro" class="btn btn-primary px-4 me-2">
-                                        <i class="bi bi-save me-2"></i> Guardar Libro
-                                    </button>
-                                    <button type="submit" name="guardar_resena" class="btn btn-success px-4">
-                                        <i class="bi bi-chat-square-text me-2"></i> Guardar Reseña
-                                    </button>
+                                <button type="submit" name="guardar_libro" class="btn btn-primary px-4">
+                                    <i class="bi bi-save me-2"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sección de Reseñas (Separada del formulario principal) -->
+                <div class="card shadow border-0 rounded-4 mb-5">
+                    <div class="card-body p-5">
+                        <h4 class="fw-bold mb-4">Reseñas</h4>
+                        
+                        <!-- Lista de reseñas existentes -->
+                        {% with libro.resena_set.all as reseñas %}
+                        {% if reseñas %}
+                            <div class="mb-4">
+                                {% for resena in reseñas %}
+                                    <div class="card mb-3 resena-card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <strong>{{ resena.usuario.username }}</strong>
+                                                    <span class="badge bg-secondary ms-2">{{ resena.get_tipo_display }}</span>
+                                                </div>
+                                                <small class="text-muted">{{ resena.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                            </div>
+                                            <h6 class="mt-2">{{ resena.titulo }}</h6>
+                                            <div class="mt-2">
+                                                <p>{{ resena.contenido|linebreaks }}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="calificacion">
+                                                        {% with ''|center:resena.calificacion as range %}
+                                                        {% for _ in range %}
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        {% endfor %}
+                                                        {% endwith %}
+                                                        {% with ''|center:5|slice:resena.calificacion as range %}
+                                                        {% for _ in range %}
+                                                            <i class="bi bi-star text-warning"></i>
+                                                        {% endfor %}
+                                                        {% endwith %}
+                                                    </div>
+                                                    {% if resena.usuario == request.user %}
+                                                    <a href="{% url 'editar_resena' resena.pk %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-pencil"></i> Editar
+                                                    </a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No hay reseñas para este libro.</p>
+                        {% endif %}
+                        {% endwith %}
+                        
+                        <!-- Formulario para nueva reseña (Separado) -->
+                        <form method="post" action="{% url 'agregar_resena' libro.pk %}">
+                            {% csrf_token %}
+                            <h5 class="mt-4">Agregar nueva reseña:</h5>
+                            
+                            <div class="mb-3">
+                                <label for="resena-titulo" class="form-label">Título</label>
+                                <input type="text" class="form-control" id="resena-titulo" name="titulo" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="resena-contenido" class="form-label">Contenido</label>
+                                <textarea class="form-control" id="resena-contenido" name="contenido" rows="4" required></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="resena-calificacion" class="form-label">Calificación</label>
+                                    <select class="form-select" id="resena-calificacion" name="calificacion" required>
+                                        <option value="">Seleccione...</option>
+                                        {% for i in "12345" %}
+                                        <option value="{{ i }}">{{ i }} estrella{{ i|pluralize }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="resena-tipo" class="form-label">Tipo</label>
+                                    <select class="form-select" id="resena-tipo" name="tipo" required>
+                                        <option value="LIBRO">Reseña de Libro</option>
+                                        <option value="AUTOR">Reseña de Autor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="bi bi-send me-2"></i> Publicar Reseña
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -146,36 +154,14 @@
 </section>
 
 <style>
-    .form-control, .form-select, .form-control-file {
+    /* Tus estilos actuales se mantienen */
+    .form-control, .form-select {
         padding: 0.75rem 1rem;
-        border: 1px solid #dee2e6;
         border-radius: 0.5rem;
     }
-    .form-control:focus, .form-select:focus {
-        border-color: #86b7fe;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-    }
-    .list-group-item {
-        border-radius: 0.5rem !important;
-        margin-bottom: 0.5rem;
-    }
-    textarea.form-control {
-        min-height: 120px;
-    }
     .resena-card {
-        border-left: 4px solid #ffc107;
-        transition: all 0.3s ease;
+        border-left: 4px solid #0d6efd;
     }
-    .resena-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .calificacion {
-        color: #ffc107;
-        font-weight: bold;
-    }
-    .badge {
-        font-size: 0.75em;
-    }
+    /* ... otros estilos ... */
 </style>
 {% endblock %}
