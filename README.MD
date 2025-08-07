@@ -1,14 +1,38 @@
-# Sistema de Gestión de Librería
+# 📚 Book Flow - Plataforma de Gestión de Libros
 
-Aplicación web Django que implementa el patrón MVT para gestionar libros, autores y editoriales.
+## 📌 Descripción
+Plataforma web para gestión de libros con sistema de mensajería integrado. Desarrollada con Django y Bootstrap.
 
-## 🛠 Instalación
+## ✨ Características Principales
+- ✅ Sistema de autenticación de usuarios
+- 📖 Catálogo de libros interactivo
+- ✉️ Mensajería entre usuarios
+- 🔍 Búsqueda avanzada
+- 📱 Diseño responsive
 
-1. Clonar el repositorio
-2. Crear entorno virtual: `python -m venv venv`
-3. Activar entorno: `source venv/bin/activate` (Linux/Mac) o `venv\Scripts\activate` (Windows)
-4. Instalar dependencias: `pip install django`
-5. Migrar la base de datos: 
-   ```bash
-   python manage.py makemigrations
+## 🛠️ Tecnologías
+- **Backend**: Django 5.0, Python 3.10
+- **Frontend**: Bootstrap 5, HTML5, CSS3
+- **Base de datos**: PostgreSQL
+- **Despliegue**: Docker, AWS (opcional)
+
+## 🚀 Cómo Empezar
+
+### Requisitos Previos
+- Python 3.10+
+- PostgreSQL 14+
+
+### Instalación
+```bash
+# Clonar repositorio
+git clone https://github.com/tu-usuario/book-flow.git
+cd book-flow
+
+# Entorno virtual (recomendado)
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# Instalar dependencias
+pip install -r requirements.txtions
    python manage.py migrate

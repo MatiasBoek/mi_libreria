@@ -9,7 +9,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 
-
 # INDEX/INICIO
 
 def inicio(request):
@@ -23,23 +22,21 @@ def agregar_libro(request):
         {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
         {'name': 'Agregar Libro', 'url': ''}  
     ]
-    
-    autores = Autor.objects.all().order_by('apellido', 'nombre')
-    editoriales = Editorial.objects.all().order_by('nombre')
-    
+
     if request.method == 'POST':
-        form = LibroForm(request.POST, request.FILES)  
+        form = LibroForm(request.POST, request.FILES)
         if form.is_valid():
             libro = form.save()
             messages.success(request, f'Libro "{libro.titulo}" agregado correctamente')
             return redirect('inicio:listar_libros')
     else:
         form = LibroForm()
-    
+
+    # Pasa los querysets adicionales al contexto por si necesitas usarlos en el template
     context = {
         'form': form,
-        'autores': autores,
-        'editoriales': editoriales,
+        'autores': Autor.objects.all().order_by('apellido', 'nombre'),
+        'editoriales': Editorial.objects.all().order_by('nombre'),
         'breadcrumbs': breadcrumbs,
         'titulo': 'Agregar Nuevo Libro'
     }
@@ -47,10 +44,10 @@ def agregar_libro(request):
     return render(request, 'gestion_libros/agregar_libro.html', context)
 
 def listar_libros(request):
-    libros = Libro.objects.all()
+    libros = Libro.objects.all()    
     
     context = {
-        'libros': libros,
+        'libros': libros, 
         'breadcrumbs': [
             {'name': 'Libros', 'url': reverse('inicio:listar_libros')}
         ]
@@ -198,7 +195,6 @@ def editar_autor(request, pk):
         'autor': autor,
         'titulo': 'Editar Autor',
         'breadcrumbs': [
-            {'name': 'Inicio', 'url': reverse('inicio:inicio')},
             {'name': 'Autores', 'url': reverse('inicio:listar_autores')},
             {'name': f'Editar {autor.nombre}', 'url': request.path}
         ]

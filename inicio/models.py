@@ -7,10 +7,13 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 import os
+import re
+from django.db import models
+from django.utils.timezone import now
+from decimal import Decimal, InvalidOperation
 
-# Define esta función fuera de tus modelos
-def get_current_year():
-    return timezone.now().year
+def current_year():
+    return now().year
 
 class Autor(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
@@ -155,7 +158,6 @@ class Editorial(models.Model):
         if not self.slug:
             self.slug = slugify(self.nombre)
             
-            # Si el slug ya existe, añade un sufijo numérico
             counter = 1
             while Editorial.objects.filter(slug=self.slug).exists():
                 self.slug = f"{slugify(self.nombre)}-{counter}"
@@ -164,21 +166,18 @@ class Editorial(models.Model):
         super().save(*args, **kwargs)
 
     def clean(self):
-        # Validación del nombre
+        
         if len(self.nombre) < 3:
             raise ValidationError({
                 'nombre': "El nombre debe tener al menos 3 caracteres"
             })
             
-        # Validación del logo
         if self.logo:
-            # Tamaño máximo 2MB
             if self.logo.size > 2 * 1024 * 1024:
                 raise ValidationError({
                     'logo': "El tamaño del logo no debe exceder 2MB"
                 })
                 
-            # Validar extensión del archivo
             valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg']
             ext = os.path.splitext(self.logo.name)[1].lower()
             if ext not in valid_extensions:
@@ -223,19 +222,34 @@ class Libro(models.Model):
         verbose_name="Editorial",
         related_name="libros"
     )
-    año_publicacion = models.PositiveIntegerField(
-        verbose_name="Año de publicación",
-        validators=[
-            MinValueValidator(1000, message="El año debe ser mayor a 1000"),
-            MaxValueValidator(get_current_year,
-                              message="El año no puede ser futuro")
-        ]
+    isbn = models.CharField(
+        max_length=17,
+        verbose_name="ISBN",
+        blank=True,
+        null=True,
+        help_text="Formato: 978-3-16-148410-0 o 0-306-40615-2"
     )
+    año_publicacion = models.PositiveIntegerField(
+    verbose_name="Año de publicación",
+    validators=[
+        MinValueValidator(1000, message="El año debe ser mayor a 1000"),
+        MaxValueValidator(timezone.now().year, message="El año no puede ser futuro")
+    ],
+    blank=True,
+    null=True
+)
     precio = models.DecimalField(
         verbose_name="Precio",
         max_digits=6,
         decimal_places=2,
-        validators=[MinValueValidator(0.01, message="El precio debe ser mayor a 0")]
+        validators=[MinValueValidator(0.01)],
+        default=Decimal('0.00')  # Valor por defecto explícito
+    )
+    descripcion = models.TextField(
+        verbose_name="Descripción",
+        blank=True,
+        null=True,
+        help_text="Sinopsis o resumen del libro"
     )
     fecha_registro = models.DateTimeField(
         verbose_name="Fecha de registro",
@@ -245,7 +259,6 @@ class Libro(models.Model):
         verbose_name="Disponible",
         default=True
     )
-    
     portada = models.ImageField(
         verbose_name="Portada del libro",
         upload_to='portadas/',
@@ -264,14 +277,62 @@ class Libro(models.Model):
         indexes = [
             models.Index(fields=['titulo']),
             models.Index(fields=['año_publicacion']),
+            models.Index(fields=['isbn']),  # Nuevo índice
         ]
 
     def __str__(self):
         return f"{self.titulo} ({self.año_publicacion})"
 
     def clean(self):
-        if len(self.titulo) < 3:
+        """Validaciones personalizadas"""
+        if len(self.titulo.strip()) < 3:
             raise ValidationError("El título debe tener al menos 3 caracteres")
+    
+        current_year = timezone.now().year
+        if self.año_publicacion and self.año_publicacion > current_year:
+            raise ValidationError("El año de publicación no puede ser futuro")
+        
+        if self.isbn and not self.validar_isbn():
+            raise ValidationError({
+                'isbn': "Formato ISBN inválido. Use ISBN-10 (ej. 0-306-40615-2) o ISBN-13 (ej. 978-3-16-148410-0)"
+            })
+        
+        try:
+            precio = Decimal(str(self.precio))
+            if precio <= Decimal('0.00'):
+                raise ValidationError({'precio': 'El precio debe ser mayor a 0'})
+        except (InvalidOperation, TypeError, ValueError):
+            raise ValidationError({'precio': 'El precio debe ser un número válido'})
+            
+    
+
+    def validar_isbn(self):
+        """Valida ISBN-10 o ISBN-13 sin dependencias externas"""
+        isbn = self.isbn
+        isbn_limpio = re.sub(r'[-\s]', '', isbn)
+        
+        if len(isbn_limpio) == 10:
+            if not re.match(r'^\d{9}[\dX]$', isbn_limpio, re.IGNORECASE):
+                return False
+            
+            total = sum((10 - i) * (int(c) if c != 'X' else 10) 
+                       for i, c in enumerate(isbn_limpio[:-1]))
+            check = (11 - (total % 11)) % 11
+            check_char = 'X' if check == 10 else str(check)
+            
+            return isbn_limpio[-1].upper() == check_char
+        
+        elif len(isbn_limpio) == 13:
+            if not isbn_limpio.isdigit() or not isbn_limpio.startswith(('978', '979')):
+                return False
+            
+            total = sum(int(c) * (1 if i % 2 == 0 else 3) 
+                      for i, c in enumerate(isbn_limpio[:-1]))
+            check = (10 - (total % 10)) % 10
+            
+            return int(isbn_limpio[-1]) == check
+        
+        return False
         
 class Resena(models.Model):
     TIPO_CHOICES = [

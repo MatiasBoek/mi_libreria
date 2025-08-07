@@ -105,6 +105,16 @@ class LibroForm(forms.ModelForm):
             'año_publicacion': 'Año de publicación',
             'descripcion': 'Descripción/Reseña',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ordenar autores por apellido y nombre
+        self.fields['autor'].queryset = Autor.objects.all().order_by('apellido', 'nombre')
+        # Ordenar editoriales por nombre
+        self.fields['editorial'].queryset = Editorial.objects.all().order_by('nombre')
+        
+        # Opcional: hacer el campo editorial no requerido si es necesario
+        self.fields['editorial'].required = False
             
 # BLOG
 
