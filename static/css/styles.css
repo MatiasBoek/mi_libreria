@@ -265,7 +265,32 @@ a {
         color: transparent;
     }
 
+/* ======================
+   PAGINA: ENVIAR MENSAJE
+   ====================== */
 
+    #enviar-mensaje-container textarea.form-control {
+        min-height: 200px;
+        resize: vertical;
+        padding: 1rem;
+    }
+    #enviar-mensaje-container .enviar-mensaje-btn {
+        min-width: 150px;
+    }
+    .is-invalid {
+        border-color: #dc3545;
+    }
+
+
+  /* ======================
+       PAGINA: DETALLE
+   ====================== */
+
+
+       textarea.form-control {
+        min-height: 50px;
+        resize: none;
+    }
 
 /* ======================
    COMPONENTES: BREADCRUMBS

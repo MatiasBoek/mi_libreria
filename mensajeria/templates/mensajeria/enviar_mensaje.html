@@ -1,0 +1,92 @@
+{% extends "gestion_libros/base.html" %}
+{% load static %}
+
+{% block title %}Enviar Mensaje | Book Flow{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div id="enviar-mensaje-container">
+    {% include 'breadcrumbs.html' %}
+    <div class="container mt-4">
+        <!-- Mensajes de error/success -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4>
+                    <i class="bi bi-send"></i>
+                    {% if destinatario %}
+                        Mensaje para {{ destinatario.username }}
+                    {% else %}
+                        Nuevo Mensaje
+                    {% endif %}
+                </h4>
+            </div>
+            
+            <div class="card-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger mb-3">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Campo destinatario solo para EnviarMensajeForm -->
+                    {% if 'destinatario' in form.fields %}
+                    <div class="mb-3">
+                        <label for="{{ form.destinatario.id_for_label }}" class="form-label fw-bold">Destinatario</label>
+                        {{ form.destinatario }}
+                        {% if form.destinatario.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.destinatario.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Campo mensaje (común a ambos formularios) -->
+                    <div class="mb-3">
+                        <label for="{{ form.contenido.id_for_label }}" class="form-label fw-bold">Mensaje</label>
+                        {{ form.contenido }}
+                        {% if form.contenido.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.contenido.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% if conversacion %}{% url 'mensajeria:detalle_conversacion' conversacion.id %}{% else %}{% url 'mensajeria:lista_conversaciones' %}{% endif %}" 
+                           class="btn btn-outline-secondary me-md-2">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-send-fill"></i> Enviar Mensaje
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

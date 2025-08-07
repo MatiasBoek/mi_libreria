@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="bi bi-chat-dots"></i> Conversación con {{ destinatario.username }}
+            </h4>
+            <a href="{% url 'mensajeria:lista_conversaciones' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+        
+        <div class="card-body" style="height: 400px; overflow-y: auto;">
+            {% for mensaje in mensajes %}
+            <div class="mb-3 {% if mensaje.remitente == request.user %}text-end{% endif %}">
+                <div class="d-flex align-items-center {% if mensaje.remitente == request.user %}justify-content-end{% endif %}">
+                    {% if mensaje.remitente != request.user %}
+                    <img src="{{ mensaje.remitente.perfil.avatar.url }}" 
+                         class="rounded-circle me-2" width="30" height="30">
+                    {% endif %}
+                    
+                    <div class="{% if mensaje.remitente == request.user %}bg-primary text-white{% else %}bg-light{% endif %} 
+                                p-3 rounded-3" style="max-width: 70%;">
+                        {{ mensaje.contenido }}
+                    </div>
+                    
+                    {% if mensaje.remitente == request.user %}
+                    <img src="{{ mensaje.remitente.perfil.avatar.url }}" 
+                         class="rounded-circle ms-2" width="30" height="30">
+                    {% endif %}
+                </div>
+                <small class="text-muted">
+                    {{ mensaje.fecha_envio|timesince }} ago
+                    {% if mensaje.remitente == request.user and mensaje.leido %}
+                    <i class="bi bi-check2-all text-primary"></i>
+                    {% endif %}
+                </small>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card-footer">
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ form.contenido }}
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Enviar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

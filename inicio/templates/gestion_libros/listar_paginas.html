@@ -1,34 +1,29 @@
 {% extends 'gestion_libros/base.html' %}
+{% load static %}
+
+{% block title %}Nuestras Páginas| Book Flow{% endblock %}
 
 {% block content %}
-<!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
-            <div class="container px-5">
-                <a class="navbar-brand" href="{% url 'inicio:inicio' %}">
-                    <span class="fw-bolder text-primary">Book Flow</span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_libros' %}">Libros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_autores' %}">Autores</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li> 
-                    </ul>
+<div class="container px-5 my-5">
+    <h1 class="text-center mb-5">Nuestras Páginas</h1>
+    
+    <div class="row">
+        {% for page in pages %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">{{ page.title }}</h3>
+                    <p class="card-text">{{ page.excerpt }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'inicio:detalle_pagina' page.pk %}" class="btn btn-primary">
+                        Leer más
+                    </a>
                 </div>
             </div>
-        </nav>
-    <h1>Nuestras Páginas</h1>
-    <ul>
-        {% for pagina in paginas %}
-        <li>
-            <h2>{{ pagina.titulo }}</h2>
-            <p>{{ pagina.contenido|truncatewords:30 }}</p>
-            <a href="{% url 'inicio:detalle_pagina' pagina.pk %}">Leer más</a>
-        </li>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 {% endblock %}
+

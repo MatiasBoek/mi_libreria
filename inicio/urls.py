@@ -22,6 +22,7 @@ urlpatterns = [
     
     #Reseñas
     path('libros/<int:libro_id>/resena/', views.crear_resena, name='crear_resena'),
+    path('libros/<int:libro_pk>/reseñas/nueva/', views.agregar_resena, name='agregar_resena'),
     path('resenas/', views.listar_resenas, name='listar_resenas'),
     path('resenas/nueva/', views.crear_resena, name='crear_resena'),
     path('resenas/<int:pk>/', views.detalle_resena, name='detalle_resena'),

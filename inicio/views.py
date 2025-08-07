@@ -21,7 +21,7 @@ def inicio(request):
 def agregar_libro(request):
     breadcrumbs = [
         {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
-        {'name': 'Agregar Libro', 'url': 'inicio:agregar_libro'}  
+        {'name': 'Agregar Libro', 'url': ''}  
     ]
     
     autores = Autor.objects.all().order_by('apellido', 'nombre')

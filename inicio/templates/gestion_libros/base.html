@@ -43,8 +43,15 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'inicio:listar_editoriales' %}">Editoriales</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'inicio:buscar' %}">Buscar</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'inicio:contacto' %}">Contacto</a></li>
-                </ul>
-                
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mensajeria:lista_conversaciones' %}">
+                            <i class="bi bi-chat-left-text"></i> Mensajes
+                            {% if num_mensajes_no_leidos > 0 %}
+                            <span class="badge bg-danger">{{ num_mensajes_no_leidos }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>                
                 <!-- Menú de usuario -->
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
