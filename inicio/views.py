@@ -44,10 +44,11 @@ def agregar_libro(request):
     return render(request, 'gestion_libros/agregar_libro.html', context)
 
 def listar_libros(request):
-    libros = Libro.objects.all()    
+    libros = Libro.objects.all().order_by('-id')  # Ordenados por los más recientes primero
+    print(f"Libros encontrados: {libros.count()}")  # Debug
     
     context = {
-        'libros': libros, 
+        'libros': libros,
         'breadcrumbs': [
             {'name': 'Libros', 'url': reverse('inicio:listar_libros')}
         ]
