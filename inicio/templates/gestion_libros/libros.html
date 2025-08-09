@@ -6,6 +6,10 @@
 {% block content %}
 {% include 'breadcrumbs.html' %}
 
+{% block extra_css %}
+<link href="{% static 'css/editoriales.css' %}" rel="stylesheet">
+{% endblock %}
+
 <main class="flex-shrink-0">
         <div class="container px-5 my-5">
             <div class="text-center mb-5">

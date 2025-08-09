@@ -16,44 +16,48 @@ def inicio(request):
 
 # LIBRO
 
+def listar_libros(request):
+    libros = Libro.objects.select_related('autor', 'editorial').all().order_by('titulo')
+    breadcrumbs = [
+            {'name': 'Libros', 'url': ''} 
+        ]
+    context = {
+        'libros': libros,
+        'breadcrumbs': breadcrumbs,
+        'titulo_pagina': 'Catálogo de Libros',        
+    }
+    
+    return render(request, 'gestion_libros/libros.html', context)
+
 @login_required
 def agregar_libro(request):
-    breadcrumbs = [
-        {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
-        {'name': 'Agregar Libro', 'url': ''}  
-    ]
-
     if request.method == 'POST':
         form = LibroForm(request.POST, request.FILES)
         if form.is_valid():
-            libro = form.save()
-            messages.success(request, f'Libro "{libro.titulo}" agregado correctamente')
-            return redirect('inicio:listar_libros')
+            try:
+                libro = form.save()
+                messages.success(request, f'Libro "{libro.titulo}" agregado correctamente')
+                return redirect('inicio:listar_libros')
+            except Exception as e:
+                messages.error(request, f'Error al guardar: {str(e)}')
+                print(f"Error al guardar: {e.__class__.__name__}: {e}")
+        else:
+    
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         form = LibroForm()
 
-    # Pasa los querysets adicionales al contexto por si necesitas usarlos en el template
     context = {
         'form': form,
-        'autores': Autor.objects.all().order_by('apellido', 'nombre'),
-        'editoriales': Editorial.objects.all().order_by('nombre'),
-        'breadcrumbs': breadcrumbs,
+        'breadcrumbs': [
+            {'name': 'Libros', 'url': reverse('inicio:listar_libros')},
+            {'name': 'Agregar Libro', 'url': ''}
+        ],
         'titulo': 'Agregar Nuevo Libro'
     }
-    
     return render(request, 'gestion_libros/agregar_libro.html', context)
-
-def listar_libros(request):
-    libros = Libro.objects.all().order_by('-id')  # Ordenados por los más recientes primero
-    print(f"Libros encontrados: {libros.count()}")  # Debug
-    
-    context = {
-        'libros': libros,
-        'breadcrumbs': [
-            {'name': 'Libros', 'url': reverse('inicio:listar_libros')}
-        ]
-    }
-    return render(request, 'gestion_libros/libros.html', context)
 
 def detalle_libro(request, pk):
     """

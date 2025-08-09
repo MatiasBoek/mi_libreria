@@ -1,5 +1,6 @@
 from django import forms
 from .models import Autor, Editorial, Libro, Resena
+from django.utils import timezone
 
 class AutorForm(forms.ModelForm):
     class Meta:
@@ -90,31 +91,35 @@ class LibroForm(forms.ModelForm):
         model = Libro
         fields = '__all__'
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'autor': forms.Select(attrs={'class': 'form-select'}),
-            'editorial': forms.Select(attrs={'class': 'form-select'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control','required': 'required'}),
+            'autor': forms.Select(attrs={'class': 'form-select','required': 'required'}),
+            'editorial': forms.Select(attrs={'class': 'form-select','required': 'required'}),
             'año_publicacion': forms.NumberInput(attrs={'class': 'form-control'}),
             'paginas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': 'any', 'min': '0'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'portada': forms.FileInput(attrs={'class': 'form-control'}),
             'disponible': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-        labels = {
-            'titulo': 'Título del libro',
-            'año_publicacion': 'Año de publicación',
-            'descripcion': 'Descripción/Reseña',
-        }
-
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Ordenar autores por apellido y nombre
         self.fields['autor'].queryset = Autor.objects.all().order_by('apellido', 'nombre')
-        # Ordenar editoriales por nombre
         self.fields['editorial'].queryset = Editorial.objects.all().order_by('nombre')
         
-        # Opcional: hacer el campo editorial no requerido si es necesario
-        self.fields['editorial'].required = False
+        # Asegura que los campos requeridos tengan el atributo HTML 'required'
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.widget.attrs['required'] = 'required'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        # Validación adicional personalizada si es necesaria
+        año_publicacion = cleaned_data.get('año_publicacion')
+        if año_publicacion and (año_publicacion < 1900 or año_publicacion > timezone.now().year):
+            self.add_error('año_publicacion', 'Año de publicación inválido')
+        
+        return cleaned_data
             
 # BLOG
 

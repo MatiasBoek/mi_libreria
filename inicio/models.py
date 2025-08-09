@@ -240,10 +240,10 @@ class Libro(models.Model):
 )
     precio = models.DecimalField(
         verbose_name="Precio",
-        max_digits=6,
+        max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0.01)],
-        default=Decimal('0.00')  # Valor por defecto explícito
+        default=Decimal('0.00')  
     )
     descripcion = models.TextField(
         verbose_name="Descripción",
@@ -296,15 +296,6 @@ class Libro(models.Model):
             raise ValidationError({
                 'isbn': "Formato ISBN inválido. Use ISBN-10 (ej. 0-306-40615-2) o ISBN-13 (ej. 978-3-16-148410-0)"
             })
-        
-        try:
-            precio = Decimal(str(self.precio))
-            if precio <= Decimal('0.00'):
-                raise ValidationError({'precio': 'El precio debe ser mayor a 0'})
-        except (InvalidOperation, TypeError, ValueError):
-            raise ValidationError({'precio': 'El precio debe ser un número válido'})
-            
-    
 
     def validar_isbn(self):
         """Valida ISBN-10 o ISBN-13 sin dependencias externas"""

@@ -1,110 +1,139 @@
 {% extends 'gestion_libros/base.html' %}
 {% load static %}
 
+{% block title %}Sobre Mí | Book Flow{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<header class="py-5">
-    <div class="container px-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xxl-6">
-                <div class="text-center my-5">
-                    <h1 class="fw-bolder mb-3">Sobre Mí</h1>
-                    <p class="lead fw-normal text-muted mb-4">
-                        Un poco sobre quién soy y mi pasión por los libros
-                    </p>
-                </div>
+{% include 'breadcrumbs.html' %}
+
+<!-- Hero Section -->
+<section class="sobremi-hero text-white">
+    <div class="container px-5 py-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-5 fw-bolder mb-3">
+                    <span class="text-gradient d-inline">Sobre Mí</span>
+                </h1>
+                <p class="lead fw-normal text-white-50 mb-4">
+                    Conoce al creador detrás de Book Flow y su pasión por los libros
+                </p>
             </div>
         </div>
     </div>
-</header>
+</section>
 
-<!-- Sección sobre mí -->
-<section class="py-5 bg-light" id="about">
+<!-- About Section -->
+<section class="py-5" id="about">
     <div class="container px-5 my-5">
         <div class="row gx-5 align-items-center">
-            <div class="col-lg-6">
-                <img class="img-fluid rounded-circle mb-5 mb-lg-0" 
+            <div class="col-lg-6 text-center mb-5 mb-lg-0">
+                <img class="sobremi-profile-img rounded-circle img-fluid" 
                      src="{% static 'assets/Mati.jpg' %}" 
-                     alt="Tu foto" style="max-width: 300px;" />
+                     alt="Matías Boek" />
             </div>
             <div class="col-lg-6">
-                <h2 class="fw-bolder">Matías Boek</h2>
-                <p class="lead fw-normal text-muted mb-0">
-                    Desarrollador y amante de los libros
-                </p>
-                <div class="mt-4">
+                <div class="mb-4">
+                    <h2 class="fw-bolder sobremi-section-title">Matías Boek</h2>
+                    <p class="lead fw-normal text-muted mb-4">
+                        <i class="bi bi-code-slash me-2"></i> Desarrollador | <i class="bi bi-book me-2"></i> Amante de los libros
+                    </p>
+                </div>
+                
+                <div class="mb-4">
                     <p class="mb-3">
-                        ¡Hola! Soy Matías, el creador de Book Flow. Desde pequeño siempre he estado 
+                        <i class="bi bi-quote text-primary me-2"></i> ¡Hola! Soy Matías, el creador de Book Flow. Desde pequeño siempre he estado 
                         fascinado por el mundo de los libros y cómo conectan a las personas con 
                         historias, conocimientos y experiencias.
                     </p>
+                    
                     <p class="mb-3">
                         Aunque soy licenciado en ciencias ambientales, he decidido estudiar ciencias de datos
                         para ampliar mis conocimientos y oportunidades laborales. Todo este tema es realmente 
-                        muy nuevo para mi. 
+                        muy nuevo para mí, pero cada día aprendo algo nuevo.
                     </p>
+                    
                     <p class="mb-4">
-                        Espero que el proyecto les guste ya que le he dedicado mucho tiempo, paciencia y sacrificio
-                        para que salga bien. 
-
-                        Gracias. Un abrazo
+                        <i class="bi bi-heart-fill text-danger me-2"></i> Este proyecto representa mucho para mí, ya que le he dedicado tiempo, paciencia y 
+                        sacrificio para que salga bien. Espero que disfrutes usando Book Flow tanto como yo 
+                        disfruté creándolo.
                     </p>
-                    <div class="d-flex gap-3">
-                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'inicio:inicio' %}">
-                            <i class="bi bi-house-door me-2"></i>Volver al inicio
-                        </a>
-                        <a class="btn btn-outline-primary btn-lg px-4" href="{% url 'inicio:contacto' %}">
-                            <i class="bi bi-envelope me-2"></i>Contáctame
-                        </a>
-                    </div>
+                </div>
+                
+                <div class="d-flex flex-wrap gap-3">
+                    <a class="btn btn-primary btn-lg px-4" href="{% url 'inicio:inicio' %}">
+                        <i class="bi bi-house-door me-2"></i> Volver al inicio
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg px-4" href="{% url 'inicio:contacto' %}">
+                        <i class="bi bi-envelope me-2"></i> Contáctame
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Sección de habilidades/intereses -->
-<section class="py-5">
+<!-- Skills Section -->
+<section class="py-5 bg-light">
     <div class="container px-5 my-5">
         <div class="row gx-5 justify-content-center">
             <div class="col-lg-8 col-xl-6">
-                <div class="text-center">
-                    <h2 class="fw-bolder">Mis habilidades</h2>
-                    <p class="lead fw-normal text-muted mb-5">
-                        Algunas de las tecnologías y habilidades que utilizo en este proyecto
+                <div class="text-center mb-5">
+                    <h2 class="fw-bolder sobremi-section-title">Mis habilidades</h2>
+                    <p class="lead fw-normal text-muted mb-0">
+                        Tecnologías y habilidades que he utilizado para desarrollar este proyecto
                     </p>
                 </div>
             </div>
         </div>
+        
         <div class="row gx-5">
+            <!-- Backend Card -->
             <div class="col-lg-4 mb-5">
-                <div class="card h-100 shadow border-0">
-                    <div class="card-body p-4">
+                <div class="card h-100 sobremi-skill-card shadow border-0 rounded-4 overflow-hidden">
+                    <div class="card-body p-4 text-center">
+                        <div class="sobremi-skill-icon text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center">
+                            <i class="fab fa-python fs-4"></i>
+                        </div>
                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">Backend</div>
-                        <h5 class="card-title mb-3">Django & Python</h5>
-                        <p class="card-text mb-0">
-                            Desarrollo de aplicaciones web robustas con Django y Python.
+                        <h3 class="card-title mb-3">Django & Python</h3>
+                        <p class="card-text text-muted mb-0">
+                            Desarrollo de aplicaciones web robustas con Django y Python, implementando modelos, vistas y lógica de negocio.
                         </p>
                     </div>
                 </div>
             </div>
+            
+            <!-- Frontend Card -->
             <div class="col-lg-4 mb-5">
-                <div class="card h-100 shadow border-0">
-                    <div class="card-body p-4">
+                <div class="card h-100 sobremi-skill-card shadow border-0 rounded-4 overflow-hidden">
+                    <div class="card-body p-4 text-center">
+                        <div class="sobremi-skill-icon text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center">
+                            <i class="fab fa-html5 fs-4"></i>
+                        </div>
                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">Frontend</div>
-                        <h5 class="card-title mb-3">HTML, CSS & Bootstrap</h5>
-                        <p class="card-text mb-0">
-                            Creación de interfaces atractivas y responsivas.
+                        <h3 class="card-title mb-3">HTML, CSS & Bootstrap</h3>
+                        <p class="card-text text-muted mb-0">
+                            Creación de interfaces atractivas y responsivas utilizando Bootstrap 5 y CSS personalizado.
                         </p>
                     </div>
                 </div>
             </div>
+            
+            <!-- Database Card -->
             <div class="col-lg-4 mb-5">
-                <div class="card h-100 shadow border-0">
-                    <div class="card-body p-4">
+                <div class="card h-100 sobremi-skill-card shadow border-0 rounded-4 overflow-hidden">
+                    <div class="card-body p-4 text-center">
+                        <div class="sobremi-skill-icon text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center">
+                            <i class="fas fa-database fs-4"></i>
+                        </div>
                         <div class="badge bg-primary bg-gradient rounded-pill mb-2">Base de datos</div>
-                        <h5 class="card-title mb-3">PostgreSQL</h5>
-                        <p class="card-text mb-0">
-                            Diseño y gestión de bases de datos relacionales.
+                        <h3 class="card-title mb-3">PostgreSQL</h3>
+                        <p class="card-text text-muted mb-0">
+                            Diseño y gestión de bases de datos relacionales, optimizando consultas y relaciones.
                         </p>
                     </div>
                 </div>
@@ -112,4 +141,42 @@
         </div>
     </div>
 </section>
+
+<!-- Motivación Section -->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center">
+                    <h2 class="fw-bolder sobremi-section-title mb-4">Mi Motivación</h2>
+                    <div class="border-start border-primary border-4 ps-4">
+                        <p class="mb-4 lead fst-italic">
+                            <i class="bi bi-quote text-primary me-2"></i>
+                            Creé Book Flow para combinar mi pasión por la lectura con mi interés por la tecnología. 
+                            Cada línea de código en este proyecto representa mi esfuerzo por aprender y crecer como desarrollador.
+                            <i class="bi bi-quote text-primary ms-2 rotate-180"></i>
+                        </p>
+                        <footer class="blockquote-footer mt-3">Matías Boek</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Efecto hover para las tarjetas de habilidades
+    document.querySelectorAll('.sobremi-skill-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 1rem 1.5rem rgba(0, 0, 0, 0.1)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+</script>
 {% endblock %}

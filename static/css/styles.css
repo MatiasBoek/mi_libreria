@@ -112,6 +112,103 @@ a {
 }
 
 /* ======================
+    PÁGINA: SOBRE MI 
+====================== */
+
+/* Hero Section - Versión Compacta */
+.sobremi-hero {
+    background: linear-gradient(135deg, var(--bs-primary), var(--bs-indigo));
+    padding: 3.5rem 0;  /* Reducido de 6rem (60px → 35px) */
+    position: relative;
+    overflow: hidden;
+}
+
+.sobremi-hero .text-gradient {
+    background: linear-gradient(90deg, #ffffff, #f8f9fa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    margin-bottom: 0.5rem; /* Espacio más ajustado bajo el título */
+}
+
+.sobremi-hero .lead {
+    font-size: 1.15rem; /* Texto ligeramente más pequeño */
+    color: rgba(255, 255, 255, 0.9) !important;
+    max-width: 600px;
+    margin: 0 auto; /* Centrado sin margen extra */
+    padding-top: 0.5rem; /* Espacio mínimo arriba */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajuste de alineación vertical (foto + texto) */
+#about .row.align-items-center {
+    align-items: flex-start !important;
+    margin-top: -2rem; /* Reduce el espacio superior */
+}
+
+/* Estilo unificado para TODOS los títulos principales */
+.text-gradient {
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-indigo));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+}
+
+/* Aplica el mismo estilo a los subtítulos */
+h2.sobremi-section-title,
+h3.card-title {
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-indigo));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+/* Elimina el subrayado anterior */
+h2.sobremi-section-title:after {
+    display: none;
+}
+
+/* Profile Image */
+.sobremi-profile-img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-top: 0;
+}
+
+/* Ajustes para tarjetas de habilidades */
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sobremi-profile-img {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1.5rem;
+    }
+    
+    #about .row.align-items-center {
+        text-align: center;
+    }
+    
+    .text-gradient,
+    h2.sobremi-section-title,
+    h3.card-title {
+        font-size: 1.8rem; /* Tamaño uniforme en móviles */
+    }
+}
+
+
+/* ======================
    PÁGINA: DETALLE LIBRO
    ====================== */
 .book-detail-cover {

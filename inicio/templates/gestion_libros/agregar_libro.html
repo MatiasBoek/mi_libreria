@@ -1,6 +1,12 @@
 {% extends 'gestion_libros/base.html' %}
 {% load static %}
 
+{% block title %}Agregar Libro | Book Flow{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 {% include 'breadcrumbs.html' %}
 
@@ -19,7 +25,7 @@
                 <div class="card-body p-5">
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
-                        
+                                   
                         <div class="row gx-4">
                             <!-- Columna Izquierda -->
                             <div class="col-md-6">
@@ -28,76 +34,120 @@
                                     <label for="id_titulo" class="form-label fw-bold">
                                         Título del Libro <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="id_titulo" name="titulo" required>
-                                    <div class="invalid-feedback">
-                                        Por favor ingresa el título del libro.
-                                    </div>
+                                    <input type="text" class="form-control {% if form.titulo.errors %}is-invalid{% endif %}" 
+                                           id="id_titulo" name="titulo" value="{{ form.titulo.value|default_if_none:'' }}" required>
+                                    {% if form.titulo.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.titulo.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="invalid-feedback">
+                                            Por favor ingresa el título del libro.
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 
                                 <!-- Campo Autor -->
-                                    <div class="mb-4">
-                                        <label for="id_autor" class="form-label fw-bold">
-                                            Autor <span class="text-danger">*</span>
-                                        </label>
-                                        <select class="form-select" id="id_autor" name="autor" required>
-                                            <option value="" selected disabled>Selecciona un autor</option>
-                                            {% for autor in autores %}
-                                                <option value="{{ autor.id }}">{{ autor.nombre }} {{ autor.apellido }}</option>
+                                <div class="mb-4">
+                                    <label for="id_autor" class="form-label fw-bold">
+                                        Autor <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select {% if form.autor.errors %}is-invalid{% endif %}" 
+                                            id="id_autor" name="autor" required>
+                                        <option value="" selected disabled>Selecciona un autor</option>
+                                        {% for autor in autores %}
+                                            <option value="{{ autor.id }}" 
+                                                {% if form.autor.value|stringformat:"s" == autor.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ autor.nombre }} {{ autor.apellido }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted d-block mt-2">
+                                        ¿No encuentras el autor? <a href="{% url 'inicio:agregar_autor' %}" class="text-decoration-none">Agregar nuevo autor</a>
+                                    </small>
+                                    {% if form.autor.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.autor.errors %}
+                                                {{ error }}
                                             {% endfor %}
-                                        </select>
-                                        <small class="text-muted d-block mt-2">
-                                            ¿No encuentras el autor? <a href="{% url 'inicio:agregar_autor' %}" class="text-decoration-none">Agregar nuevo autor</a>
-                                        </small>
+                                        </div>
+                                    {% else %}
                                         <div class="invalid-feedback">
                                             Selecciona un autor válido.
                                         </div>
-                                    </div>
-
+                                    {% endif %}
+                                </div>
                                 
-                                <!-- Campo ISBN (con más espacio) -->
+                                <!-- Campo ISBN -->
                                 <div class="mb-4">
                                     <label for="id_isbn" class="form-label fw-bold">
                                         ISBN
                                     </label>
-                                    <input type="text" class="form-control" id="id_isbn" name="isbn" 
+                                    <input type="text" class="form-control {% if form.isbn.errors %}is-invalid{% endif %}" 
+                                           id="id_isbn" name="isbn" value="{{ form.isbn.value|default_if_none:'' }}"
                                            placeholder="Ej: 978-3-16-148410-0" maxlength="17">
-                                    <div class="invalid-feedback">
-                                        Ingresa un ISBN válido (13 dígitos).
-                                    </div>
+                                    {% if form.isbn.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.isbn.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             
                             <!-- Columna Derecha -->
                             <div class="col-md-6">
                                 <!-- Campo Editorial -->
-                                    <div class="mb-4">
-                                        <label for="id_editorial" class="form-label fw-bold">
-                                            Editorial <span class="text-danger">*</span>
-                                        </label>
-                                        <select class="form-select" id="id_editorial" name="editorial" required>
-                                            <option value="" selected disabled>Selecciona una editorial</option>
-                                            {% for editorial in editoriales %}
-                                                <option value="{{ editorial.id }}">{{ editorial.nombre }}</option>
+                                <div class="mb-4">
+                                    <label for="id_editorial" class="form-label fw-bold">
+                                        Editorial <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select {% if form.editorial.errors %}is-invalid{% endif %}" 
+                                            id="id_editorial" name="editorial" required>
+                                        <option value="" selected disabled>Selecciona una editorial</option>
+                                        {% for editorial in editoriales %}
+                                            <option value="{{ editorial.id }}"
+                                                {% if form.editorial.value|stringformat:"s" == editorial.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ editorial.nombre }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted d-block mt-2">
+                                        ¿No encuentras la editorial? <a href="{% url 'inicio:agregar_editorial' %}" class="text-decoration-none">Agregar nueva editorial</a>
+                                    </small>
+                                    {% if form.editorial.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.editorial.errors %}
+                                                {{ error }}
                                             {% endfor %}
-                                        </select>
-                                        <small class="text-muted d-block mt-2">
-                                            ¿No encuentras la editorial? <a href="{% url 'inicio:agregar_editorial' %}" class="text-decoration-none">Agregar nueva editorial</a>
-                                        </small>
+                                        </div>
+                                    {% else %}
                                         <div class="invalid-feedback">
                                             Selecciona una editorial válida.
                                         </div>
-                                    </div>
-                                <!-- Campos en línea con mejor espaciado -->
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Campos en línea -->
                                 <div class="row gx-3">
                                     <div class="col-md-6 mb-4">
                                         <label for="id_año_publicacion" class="form-label fw-bold">
                                             Año Publicación
                                         </label>
-                                        <input type="number" class="form-control" id="id_año_publicacion" 
-                                               name="año_publicacion" min="1900" max="{% now 'Y' %}">
-                                        <div class="invalid-feedback">
-                                            Ingresa un año válido (entre 1900 y {% now 'Y' %}).
-                                        </div>
+                                        <input type="number" class="form-control {% if form.año_publicacion.errors %}is-invalid{% endif %}" 
+                                               id="id_año_publicacion" name="año_publicacion" 
+                                               value="{{ form.año_publicacion.value|default_if_none:'' }}"
+                                               min="1900" max="{% now 'Y' %}">
+                                        {% if form.año_publicacion.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.año_publicacion.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     
                                     <div class="col-md-6 mb-4">
@@ -106,12 +156,22 @@
                                         </label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
-                                            <input type="number" class="form-control" id="id_precio" 
-                                                   name="precio" step="0.01" min="0" required>
+                                            <input type="number" class="form-control {% if form.precio.errors %}is-invalid{% endif %}" 
+                                                   id="id_precio" name="precio" 
+                                                   value="{{ form.precio.value|default_if_none:'' }}"
+                                                   step="0.01" min="0" required>
                                         </div>
-                                        <div class="invalid-feedback">
-                                            Ingresa un precio válido.
-                                        </div>
+                                        {% if form.precio.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.precio.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <div class="invalid-feedback">
+                                                Ingresa un precio válido.
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 
@@ -120,8 +180,15 @@
                                     <label for="id_portada" class="form-label fw-bold">
                                         Portada del Libro
                                     </label>
-                                    <input type="file" class="form-control" id="id_portada" name="portada" 
-                                           accept="image/jpeg, image/png">
+                                    <input type="file" class="form-control {% if form.portada.errors %}is-invalid{% endif %}" 
+                                           id="id_portada" name="portada" accept="image/jpeg, image/png">
+                                    {% if form.portada.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.portada.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                     <small class="text-muted d-block mt-2">
                                         Formatos aceptados: JPG, PNG (max. 2MB)
                                     </small>
@@ -129,13 +196,21 @@
                             </div>
                         </div>
                         
-                        <!-- Campo Descripción con más espacio -->
+                        <!-- Campo Descripción -->
                         <div class="mb-4">
                             <label for="id_descripcion" class="form-label fw-bold">
                                 Descripción
                             </label>
-                            <textarea class="form-control" id="id_descripcion" name="descripcion" 
-                                      rows="5" style="min-height: 150px;"></textarea>
+                            <textarea class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}" 
+                                      id="id_descripcion" name="descripcion" rows="5" 
+                                      style="min-height: 150px;">{{ form.descripcion.value|default_if_none:'' }}</textarea>
+                            {% if form.descripcion.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.descripcion.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                             <small class="text-muted d-block mt-2">
                                 Escribe una breve sinopsis del libro (máx. 1000 caracteres)
                             </small>
@@ -156,43 +231,6 @@
         </div>
     </div>
 </div>
-
-<!-- Estilos adicionales -->
-<style>
-    /* Asegurar espacio suficiente en campos */
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
-        min-height: 45px;
-    }
-    
-    /* Espacio extra para campos importantes */
-    #id_isbn, #id_precio {
-        padding-right: 2rem;
-    }
-    
-    /* Textarea más grande */
-    textarea.form-control {
-        min-height: 150px;
-        resize: vertical;
-    }
-    
-    /* Mejor separación entre campos en línea */
-    .row.gx-3 > [class^="col-"] {
-        padding-right: 0.75rem;
-        padding-left: 0.75rem;
-    }
-    
-    /* Validaciones */
-    .invalid-feedback {
-        font-size: 0.85rem;
-    }
-    
-    /* Input group ajustado */
-    .input-group-text {
-        min-width: 40px;
-        justify-content: center;
-    }
-</style>
 
 <!-- Script para formato ISBN -->
 <script>
@@ -224,6 +262,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.setCustomValidity('');
             }
         });
+    }
+    
+    // Mostrar errores de validación al enviar
+    const form = document.querySelector('.needs-validation');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
     }
 });
 </script>
