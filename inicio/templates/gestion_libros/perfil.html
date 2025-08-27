@@ -63,6 +63,12 @@
                                             <span class="badge bg-primary rounded-pill">{{ user.resena_set.count }}</span>
                                         </div>
                                         <p>Gestiona todas las reseñas que has publicado en nuestra plataforma.</p>
+                                         {% if request.user != user %}
+                                            <a href="{% url 'mensajeria:enviar_mensaje_usuario' user.id %}" 
+                                            class="btn btn-outline-success mt-2">
+                                                <i class="bi bi-chat-square-text me-1"></i> Consultar sobre sus reseñas
+                                            </a>
+                                        {% endif %}
                                         <a href="{% url 'inicio:mis_resenas' %}" class="btn btn-outline-primary">
                                             <i class="bi bi-eye me-1"></i> Ver mis reseñas
                                         </a>

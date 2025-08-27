@@ -3,6 +3,10 @@
 
 {% block title %}Agregar Editorial | Book Flow{% endblock %}
 
+{% block extra_css %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 {% include 'breadcrumbs.html' %}
 
@@ -42,8 +46,6 @@
                             <!-- Nombre -->
                             <div class="mb-4">
                                 <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold fs-5 mb-3">Nombre de la Editorial</label>
-                                <input type="text" class="form-control" id="{{ form.nombre.id_for_label }}" 
-                                       name="{{ form.nombre.name }}" value="{{ form.nombre.value|default:'' }}" required>
                                 {% if form.nombre.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ form.nombre.errors|join:", " }}

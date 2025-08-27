@@ -12,11 +12,11 @@ class Conversacion(models.Model):
         ordering = ['-ultima_actualizacion']
 
 class Mensaje(models.Model):
-    conversacion = models.ForeignKey(Conversacion, on_delete=models.CASCADE, related_name='mensajes')
-    remitente = models.ForeignKey(User, on_delete=models.CASCADE)
+    conversacion = models.ForeignKey(Conversacion, on_delete=models.CASCADE)
+    remitente = models.ForeignKey(User, related_name='mensajes_enviados', on_delete=models.CASCADE)
+    destinatario = models.ForeignKey(User, related_name='mensajes_recibidos', on_delete=models.CASCADE)
     contenido = models.TextField()
-    fecha_envio = models.DateTimeField(auto_now_add=True)
-    leido = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['fecha_envio']
